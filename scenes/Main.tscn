@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://bmsjh383ptgwy"]
+
+[node name="Main" type="Node2D" unique_id=484667603]
+
+[node name="Background" type="TextureRect" parent="." unique_id=1403740164]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="UI_Layer" type="CanvasLayer" parent="." unique_id=609991995]
