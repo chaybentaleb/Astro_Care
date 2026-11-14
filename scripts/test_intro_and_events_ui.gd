@@ -13,33 +13,36 @@ func _init() -> void:
 
 	var text_lbl: Label = diag.get_node_or_null("%DialogueText")
 	var click_lbl: Label = diag.get_node_or_null("%ClickHint")
-	var btn_start: Button = diag.get_node_or_null("%BtnStart")
+	var btn_start: Button = diag.get_node_or_null("%BtnStartMission")
+	var btn_how: Button = diag.get_node_or_null("%BtnHowToPlay")
+	var action_center = diag.get_node_or_null("%ActionButtonsCenter")
 	var warning_icon: TextureRect = diag.get_node_or_null("%WarningIcon")
 
 	assert(text_lbl != null, "DialogueText node not found")
 	assert(click_lbl != null, "ClickHint node not found")
-	assert(btn_start != null, "BtnStart node not found")
+	assert(btn_start != null, "BtnStartMission node not found")
+	assert(btn_how != null, "BtnHowToPlay node not found")
 	assert(warning_icon != null, "WarningIcon node not found")
 
-	# Verify Step 1
-	print("Step 1 Text: %s" % text_lbl.text)
-	assert("Warning: Oxygen levels dropping" in text_lbl.text, "Step 1 text mismatch")
-	assert(btn_start.visible == false, "BtnStart must be hidden on Step 1")
-	print("✓ Step 1 verified inside glowing frame with warning icon!")
+	# Verify Step 0
+	print("Step 0 Text: %s" % text_lbl.text)
+	assert("Warning: Oxygen levels dropping" in text_lbl.text, "Step 0 text mismatch")
+	assert(action_center.visible == false, "Action buttons must be hidden on Step 0")
+	print("✓ Step 0 verified inside glowing frame with warning icon!")
 
-	# Advance to Step 2
+	# Advance to Step 1
 	diag.handle_advance()
-	print("Step 2 Text: %s" % text_lbl.text)
-	assert("Emergency protocols engaged" in text_lbl.text, "Step 2 text mismatch")
-	assert(btn_start.visible == true, "BtnStart must be revealed on Step 2")
-	print("✓ Step 2 verified with START button revealed!")
+	print("Step 1 Text: %s" % text_lbl.text)
+	assert("Emergency protocols engaged" in text_lbl.text, "Step 1 text mismatch")
+	assert(action_center.visible == true, "Action buttons must be revealed on Step 1")
+	print("✓ Step 1 verified with centered START & HOW TO PLAY buttons revealed!")
 
 	# Verify signal emission on START
 	var signal_box = [false]
 	diag.intro_finished.connect(func(): signal_box[0] = true)
-	diag._on_start_pressed()
+	diag._on_start_mission_pressed()
 	assert(signal_box[0] == true, "intro_finished signal was not emitted")
-	print("✓ START button click cleanly emits intro_finished signal!")
+	print("✓ START MISSION button click cleanly emits intro_finished signal!")
 
 	diag.queue_free()
 

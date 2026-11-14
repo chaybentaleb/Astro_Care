@@ -23,13 +23,13 @@ func _init() -> void:
 
 	# Verify initial state (Index 0)
 	var text_lbl: Label = diag.get_node_or_null("%DialogueText")
-	var btn_start: Button = diag.get_node_or_null("%BtnStart")
-	assert(text_lbl != null and btn_start != null)
+	var action_center = diag.get_node_or_null("%ActionButtonsCenter")
+	assert(text_lbl != null and action_center != null)
 
 	print("Initial Step Index: %d" % diag.dialogue_index)
 	assert(diag.dialogue_index == 0, "Initial dialogue_index must be 0")
-	assert(btn_start.visible == false, "BtnStart must be hidden initially")
-	assert("Warning: Oxygen levels dropping" in text_lbl.text, "Step 1 text mismatch")
+	assert(action_center.visible == false, "Action buttons must be hidden initially")
+	assert("Warning: Oxygen levels dropping" in text_lbl.text, "Step 0 text mismatch")
 	print("✓ Initial Step 0 verified!")
 
 	# Simulate Mouse Click 1 (InputEventMouseButton)
@@ -43,18 +43,18 @@ func _init() -> void:
 
 	print("After Click 1 - Step Index: %d" % diag.dialogue_index)
 	assert(diag.dialogue_index == 1, "dialogue_index must increment to 1 after click")
-	assert(btn_start.visible == true, "BtnStart must be revealed on step 1")
-	assert("Emergency protocols engaged" in text_lbl.text, "Step 2 text mismatch")
-	print("✓ Step 1 -> Step 2 mouse click advance verified! 'START' button revealed.")
+	assert(action_center.visible == true, "Action buttons must be revealed on step 1")
+	assert("Emergency protocols engaged" in text_lbl.text, "Step 1 text mismatch")
+	print("✓ Step 0 -> Step 1 mouse click advance verified! Centered action buttons revealed.")
 
-	# Simulate Mouse Click 2 to Start
+	# Simulate Click on START MISSION button
 	var signal_received = [false]
 	diag.intro_finished.connect(func(): signal_received[0] = true)
 
-	print("Simulating click on START / screen to trigger mission...")
-	diag._input(mouse_event)
-	assert(signal_received[0] == true, "intro_finished must be emitted on final click")
-	print("✓ Final mouse click correctly emitted intro_finished signal!")
+	print("Simulating click on START MISSION to trigger mission...")
+	diag._on_start_mission_pressed()
+	assert(signal_received[0] == true, "intro_finished must be emitted on START MISSION click")
+	print("✓ START MISSION click correctly emitted intro_finished signal!")
 
 	diag.queue_free()
 	print("==================================================")

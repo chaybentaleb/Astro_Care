@@ -6,10 +6,19 @@ signal intro_finished
 @onready var dialogue_text: Label = %DialogueText
 @onready var click_hint: Label = %ClickHint
 @onready var header_label: Label = %HeaderLabel
-@onready var btn_start: Button = %BtnStart
 @onready var warning_icon: TextureRect = %WarningIcon
 @onready var intro_control: Control = $IntroControl
 @onready var dialogue_anchor: Control = $IntroControl/DialogueAnchor
+
+# Center Action Buttons
+@onready var action_buttons_center: Control = %ActionButtonsCenter
+@onready var btn_start_mission: Button = %BtnStartMission
+@onready var btn_how_to_play: Button = %BtnHowToPlay
+
+# How To Play Modal
+@onready var how_to_play_modal: PanelContainer = %HowToPlayModal
+@onready var btn_close_how_to_play: Button = %BtnCloseHowToPlay
+@onready var btn_got_it: Button = %BtnGotIt
 
 var dialogue_index: int = 0
 var is_advancing: bool = false
@@ -26,14 +35,24 @@ func _ensure_nodes() -> void:
 		click_hint = get_node_or_null("%ClickHint")
 	if header_label == null:
 		header_label = get_node_or_null("%HeaderLabel")
-	if btn_start == null:
-		btn_start = get_node_or_null("%BtnStart")
 	if warning_icon == null:
 		warning_icon = get_node_or_null("%WarningIcon")
 	if intro_control == null:
 		intro_control = get_node_or_null("IntroControl")
 	if dialogue_anchor == null:
 		dialogue_anchor = get_node_or_null("IntroControl/DialogueAnchor")
+	if action_buttons_center == null:
+		action_buttons_center = get_node_or_null("%ActionButtonsCenter")
+	if btn_start_mission == null:
+		btn_start_mission = get_node_or_null("%BtnStartMission")
+	if btn_how_to_play == null:
+		btn_how_to_play = get_node_or_null("%BtnHowToPlay")
+	if how_to_play_modal == null:
+		how_to_play_modal = get_node_or_null("%HowToPlayModal")
+	if btn_close_how_to_play == null:
+		btn_close_how_to_play = get_node_or_null("%BtnCloseHowToPlay")
+	if btn_got_it == null:
+		btn_got_it = get_node_or_null("%BtnGotIt")
 
 func _ready() -> void:
 	_ensure_nodes()
@@ -50,10 +69,21 @@ func _ready() -> void:
 		if not dialogue_anchor.gui_input.is_connected(_on_gui_input):
 			dialogue_anchor.gui_input.connect(_on_gui_input)
 
-	if btn_start:
-		btn_start.visible = false
-		if not btn_start.pressed.is_connected(_on_start_pressed):
-			btn_start.pressed.connect(_on_start_pressed)
+	if action_buttons_center:
+		action_buttons_center.visible = false
+
+	if how_to_play_modal:
+		how_to_play_modal.visible = false
+
+	# Connect action buttons
+	if btn_start_mission and not btn_start_mission.pressed.is_connected(_on_start_mission_pressed):
+		btn_start_mission.pressed.connect(_on_start_mission_pressed)
+	if btn_how_to_play and not btn_how_to_play.pressed.is_connected(_on_how_to_play_pressed):
+		btn_how_to_play.pressed.connect(_on_how_to_play_pressed)
+	if btn_close_how_to_play and not btn_close_how_to_play.pressed.is_connected(_on_close_modal_pressed):
+		btn_close_how_to_play.pressed.connect(_on_close_modal_pressed)
+	if btn_got_it and not btn_got_it.pressed.is_connected(_on_close_modal_pressed):
+		btn_got_it.pressed.connect(_on_close_modal_pressed)
 
 	show_dialogue_step(0)
 
@@ -73,36 +103,48 @@ func show_dialogue_step(index: int) -> void:
 		if click_hint:
 			click_hint.text = "▶ Click anywhere to continue..."
 			click_hint.visible = true
-		if btn_start:
-			btn_start.visible = false
+		if action_buttons_center:
+			action_buttons_center.visible = false
 	else:
 		if header_label:
 			header_label.text = "🛡️ MISSION DIRECTIVE • ASTRO-CARE COMMAND"
 			header_label.modulate = Color(0.2, 0.9, 1.0, 1.0)
 		if click_hint:
-			click_hint.text = "▶ Ready to command? Click START to initiate mission."
-		if btn_start:
-			btn_start.visible = true
-			btn_start.modulate.a = 0.0
-			btn_start.scale = Vector2(0.85, 0.85)
-			btn_start.pivot_offset = btn_start.size / 2.0
+			click_hint.text = "▶ Select an option below to proceed."
+		if action_buttons_center:
+			action_buttons_center.visible = true
+			action_buttons_center.modulate.a = 0.0
+			action_buttons_center.scale = Vector2(0.9, 0.9)
+			action_buttons_center.pivot_offset = action_buttons_center.size / 2.0
 			var tween = create_tween().set_parallel(true)
-			tween.tween_property(btn_start, "modulate:a", 1.0, 0.25)
-			tween.tween_property(btn_start, "scale", Vector2(1.0, 1.0), 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			tween.tween_property(action_buttons_center, "modulate:a", 1.0, 0.25)
+			tween.tween_property(action_buttons_center, "scale", Vector2(1.0, 1.0), 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _input(event: InputEvent) -> void:
+	# Modal handles Escape to close
+	if how_to_play_modal and how_to_play_modal.visible:
+		if event.is_action_pressed("ui_cancel"):
+			_on_close_modal_pressed()
+			if is_inside_tree() and get_viewport():
+				get_viewport().set_input_as_handled()
+		return
+
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
 	elif event.is_action_pressed("ui_accept"):
 		handle_advance()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if how_to_play_modal and how_to_play_modal.visible:
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
 	elif event.is_action_pressed("ui_accept"):
 		handle_advance()
 
 func _on_gui_input(event: InputEvent) -> void:
+	if how_to_play_modal and how_to_play_modal.visible:
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
 
@@ -115,6 +157,7 @@ func handle_advance() -> void:
 		is_advancing = true
 		dialogue_index += 1
 		show_dialogue_step(dialogue_index)
+		
 		if is_inside_tree():
 			if get_viewport():
 				get_viewport().set_input_as_handled()
@@ -122,9 +165,22 @@ func handle_advance() -> void:
 			if tree:
 				await tree.create_timer(0.2).timeout
 		is_advancing = false
-	else:
-		# If START button is already visible and user clicks, start mission
-		_on_start_pressed()
 
-func _on_start_pressed() -> void:
+func _on_start_mission_pressed() -> void:
 	intro_finished.emit()
+
+func _on_how_to_play_pressed() -> void:
+	_ensure_nodes()
+	if how_to_play_modal:
+		how_to_play_modal.visible = true
+		how_to_play_modal.modulate.a = 0.0
+		how_to_play_modal.scale = Vector2(0.92, 0.92)
+		how_to_play_modal.pivot_offset = how_to_play_modal.size / 2.0
+		var tween = create_tween().set_parallel(true)
+		tween.tween_property(how_to_play_modal, "modulate:a", 1.0, 0.2)
+		tween.tween_property(how_to_play_modal, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _on_close_modal_pressed() -> void:
+	_ensure_nodes()
+	if how_to_play_modal:
+		how_to_play_modal.visible = false
