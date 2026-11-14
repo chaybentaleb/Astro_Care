@@ -123,18 +123,6 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mode_btn"]
-bg_color = Color(0.05, 0.09, 0.14, 0.85)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0, 0.7, 0.9, 0.4)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_fail"]
 bg_color = Color(0.12549, 0.0392157, 0.0392157, 0.97)
 border_width_left = 3
@@ -178,46 +166,58 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HUDPanel" type="PanelContainer" parent="RootControl"]
+[node name="MainMarginContainer" type="MarginContainer" parent="RootControl"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
-offset_bottom = 68.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 25
+
+[node name="MainLayout" type="VBoxContainer" parent="RootControl/MainMarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HUDPanel" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout"]
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 
-[node name="MarginContainer" type="MarginContainer" parent="RootControl/HUDPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 6
 
-[node name="HBoxContainer" type="HBoxContainer" parent="RootControl/HUDPanel/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="HealthBox" type="PanelContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer"]
+[node name="HealthBox" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(170, 48)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_item")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/HealthBox"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/HealthBox"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 3
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin"]
 layout_mode = 2
 alignment = 1
 
-[node name="Header" type="HBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox"]
+[node name="Header" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox/Header"]
+[node name="Label" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
@@ -225,7 +225,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "❤️ HEALTH"
 
-[node name="HealthVal" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox/Header"]
+[node name="HealthVal" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -233,7 +233,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "70%"
 
-[node name="HealthBar" type="ProgressBar" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox"]
+[node name="HealthBar" type="ProgressBar" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/HealthBox/Margin/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
@@ -242,26 +242,26 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_bar_health")
 value = 70.0
 show_percentage = false
 
-[node name="EnergyBox" type="PanelContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer"]
+[node name="EnergyBox" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(170, 48)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_item")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/EnergyBox"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/EnergyBox"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 3
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin"]
 layout_mode = 2
 alignment = 1
 
-[node name="Header" type="HBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox"]
+[node name="Header" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox/Header"]
+[node name="Label" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
@@ -269,7 +269,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "⚡ ENERGY"
 
-[node name="EnergyVal" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox/Header"]
+[node name="EnergyVal" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -277,7 +277,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "50%"
 
-[node name="EnergyBar" type="ProgressBar" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox"]
+[node name="EnergyBar" type="ProgressBar" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/EnergyBox/Margin/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
@@ -286,26 +286,26 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_bar_energy")
 value = 50.0
 show_percentage = false
 
-[node name="OxygenBox" type="PanelContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer"]
+[node name="OxygenBox" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(170, 48)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_item")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/OxygenBox"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/OxygenBox"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 3
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin"]
 layout_mode = 2
 alignment = 1
 
-[node name="Header" type="HBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox"]
+[node name="Header" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox/Header"]
+[node name="Label" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
@@ -313,7 +313,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "🫁 OXYGEN"
 
-[node name="OxygenVal" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox/Header"]
+[node name="OxygenVal" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -321,7 +321,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "50%"
 
-[node name="OxygenBar" type="ProgressBar" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox"]
+[node name="OxygenBar" type="ProgressBar" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/OxygenBox/Margin/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
@@ -330,26 +330,26 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_bar_oxygen")
 value = 50.0
 show_percentage = false
 
-[node name="ShieldBox" type="PanelContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer"]
+[node name="ShieldBox" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(170, 48)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_item")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/ShieldBox"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/ShieldBox"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 3
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin"]
 layout_mode = 2
 alignment = 1
 
-[node name="Header" type="HBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox"]
+[node name="Header" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox/Header"]
+[node name="Label" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.4, 0.7, 1, 1)
@@ -357,7 +357,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "🛡️ SHIELD"
 
-[node name="ShieldVal" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox/Header"]
+[node name="ShieldVal" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -365,7 +365,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "50%"
 
-[node name="ShieldBar" type="ProgressBar" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox"]
+[node name="ShieldBar" type="ProgressBar" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/ShieldBox/Margin/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
@@ -374,26 +374,26 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_bar_shield")
 value = 50.0
 show_percentage = false
 
-[node name="FoodBox" type="PanelContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer"]
+[node name="FoodBox" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_item")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/FoodBox"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/FoodBox"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 3
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin"]
 layout_mode = 2
 alignment = 1
 
-[node name="Header" type="HBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox"]
+[node name="Header" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox/Header"]
+[node name="Label" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.65, 0.2, 1)
@@ -401,7 +401,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "🍏 FOOD"
 
-[node name="FoodVal" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox/Header"]
+[node name="FoodVal" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -409,7 +409,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "30"
 
-[node name="FoodBar" type="ProgressBar" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox"]
+[node name="FoodBar" type="ProgressBar" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/FoodBox/Margin/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
@@ -418,33 +418,33 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_bar_food")
 value = 30.0
 show_percentage = false
 
-[node name="RadiationBox" type="PanelContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer"]
+[node name="RadiationBox" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(190, 48)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_item")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/RadiationBox"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/RadiationBox"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 3
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin"]
 layout_mode = 2
 alignment = 1
 
-[node name="Header" type="HBoxContainer" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox"]
+[node name="Header" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox/Header"]
+[node name="Label" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox/Header"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.3, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "☢️ RAD"
 
-[node name="RadBadge" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox/Header"]
+[node name="RadBadge" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -454,7 +454,7 @@ theme_override_font_sizes/font_size = 10
 text = "[ OK ]"
 horizontal_alignment = 1
 
-[node name="RadiationVal" type="Label" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox/Header"]
+[node name="RadiationVal" type="Label" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -462,7 +462,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 text = "0 mSv"
 
-[node name="RadiationBar" type="ProgressBar" parent="RootControl/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox"]
+[node name="RadiationBar" type="ProgressBar" parent="RootControl/MainMarginContainer/MainLayout/HUDPanel/MarginContainer/HBoxContainer/RadiationBox/Margin/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
@@ -471,35 +471,31 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_bar_rad")
 value = 0.0
 show_percentage = false
 
-[node name="CenterContainer" type="CenterContainer" parent="RootControl"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 70.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="CenterContainer" type="CenterContainer" parent="RootControl/MainMarginContainer/MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="EventCard" type="PanelContainer" parent="RootControl/CenterContainer"]
-custom_minimum_size = Vector2(890, 520)
+[node name="EventCard" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer"]
+custom_minimum_size = Vector2(980, 560)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/CenterContainer/EventCard"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="TopBanner" type="HBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox"]
+[node name="TopBanner" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 layout_mode = 2
 
-[node name="EventCounter" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner"]
+[node name="EventCounter" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/TopBanner"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -508,65 +504,8 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 13
 text = "DONKI SPACE WEATHER EVENT 1 OF 14"
 
-[node name="ModeSelectorBox" type="HBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner"]
-layout_mode = 2
-theme_override_constants/separation = 6
 
-[node name="BtnModeAll" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner/ModeSelectorBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(75, 26)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 10
-theme_override_styles/normal = SubResource("StyleBoxFlat_mode_btn")
-text = "ALL (1-30)"
-
-[node name="BtnModeDonki" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner/ModeSelectorBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(80, 26)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 10
-theme_override_styles/normal = SubResource("StyleBoxFlat_mode_btn")
-text = "DONKI (1-8)"
-
-[node name="BtnModeOsdr" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner/ModeSelectorBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(80, 26)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 10
-theme_override_styles/normal = SubResource("StyleBoxFlat_mode_btn")
-text = "OSDR (9-14)"
-
-[node name="BtnModeRadlab" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner/ModeSelectorBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(95, 26)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 10
-theme_override_styles/normal = SubResource("StyleBoxFlat_mode_btn")
-text = "RADLAB (15-18)"
-
-[node name="BtnModeCsa" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner/ModeSelectorBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(85, 26)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 10
-theme_override_styles/normal = SubResource("StyleBoxFlat_mode_btn")
-text = "CSA (19-24)"
-
-[node name="BtnModeMars" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner/ModeSelectorBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(95, 26)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 10
-theme_override_styles/normal = SubResource("StyleBoxFlat_mode_btn")
-text = "MARS (20, 25-30)"
-
-[node name="DonkiBadge" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/TopBanner"]
+[node name="DonkiBadge" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/TopBanner"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.6, 0.2, 1)
@@ -574,18 +513,19 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 12
 text = "DONKI ALERT: FLR-C3.4"
 
-[node name="HSeparator" type="HSeparator" parent="RootControl/CenterContainer/EventCard/Margin/VBox"]
+[node name="HSeparator" type="HSeparator" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 layout_mode = 2
 
-[node name="EventTitle" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox"]
+[node name="EventTitle" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 22
 text = "1. Small Solar Flare"
+autowrap_mode = 3
 
-[node name="EventScenario" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox"]
+[node name="EventScenario" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
@@ -593,21 +533,22 @@ theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "Solar sensors detect a moderate C-class flare bursting from solar active region AR-3412. An ionization wavefront is approaching our forward telemetry arrays."
-autowrap_mode = 2
+autowrap_mode = 3
 
-[node name="ChoicesTitle" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox"]
+[node name="ChoicesTitle" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 12
 text = "SELECT COMMAND PROTOCOL:"
+autowrap_mode = 3
 
-[node name="ChoicesContainer" type="VBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox"]
+[node name="ChoicesContainer" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="BtnChoiceA" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
+[node name="BtnChoiceA" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
@@ -615,7 +556,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -628,12 +569,12 @@ theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 6
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA/Margin"]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ChoiceAText" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA/Margin/VBox"]
+[node name="ChoiceAText" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -641,8 +582,9 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "A. Turn on the shield"
+autowrap_mode = 3
 
-[node name="ChoiceAImpact" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA/Margin/VBox"]
+[node name="ChoiceAImpact" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceA/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -650,8 +592,9 @@ theme_override_colors/font_color = Color(0, 0.9, 0.8, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 13
 text = "[ Impact: Shield -3 | Energy -4 | +1 mSv ]"
+autowrap_mode = 3
 
-[node name="BtnChoiceB" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
+[node name="BtnChoiceB" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
@@ -659,7 +602,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -672,12 +615,12 @@ theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 6
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB/Margin"]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ChoiceBText" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB/Margin/VBox"]
+[node name="ChoiceBText" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -685,8 +628,9 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "B. Go into the shelter"
+autowrap_mode = 3
 
-[node name="ChoiceBImpact" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB/Margin/VBox"]
+[node name="ChoiceBImpact" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceB/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -694,8 +638,9 @@ theme_override_colors/font_color = Color(1, 0.7, 0.3, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 13
 text = "[ Impact: Oxygen -3 | +3 mSv ]"
+autowrap_mode = 3
 
-[node name="BtnChoiceC" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
+[node name="BtnChoiceC" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 68)
@@ -704,7 +649,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -717,12 +662,12 @@ theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 6
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC/Margin"]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ChoiceCText" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC/Margin/VBox"]
+[node name="ChoiceCText" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -730,8 +675,9 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "C. Dwarf tomatoes (~80 days)"
+autowrap_mode = 3
 
-[node name="ChoiceCImpact" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC/Margin/VBox"]
+[node name="ChoiceCImpact" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceC/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -739,8 +685,9 @@ theme_override_colors/font_color = Color(0.9, 0.4, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 13
 text = "[ Impact: Water -8 | Energy -6 | Food +26 after 3 turns ]"
+autowrap_mode = 3
 
-[node name="BtnChoiceD" type="Button" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
+[node name="BtnChoiceD" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 68)
@@ -749,7 +696,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 
-[node name="Margin" type="MarginContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD"]
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -762,12 +709,12 @@ theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 6
 
-[node name="VBox" type="VBoxContainer" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD/Margin"]
+[node name="VBox" type="VBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD/Margin"]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ChoiceDText" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD/Margin/VBox"]
+[node name="ChoiceDText" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -775,8 +722,9 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "D. Hellas Basin"
+autowrap_mode = 3
 
-[node name="ChoiceDImpact" type="Label" parent="RootControl/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD/Margin/VBox"]
+[node name="ChoiceDImpact" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/ChoicesContainer/BtnChoiceD/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -784,6 +732,7 @@ theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 13
 text = "[ Impact: Energy -12 | Oxygen -5 | Radiation x0.85 | Dust x1.5 ]"
+autowrap_mode = 3
 
 [node name="FeedbackPanel" type="PanelContainer" parent="RootControl"]
 unique_name_in_owner = true
@@ -819,7 +768,7 @@ theme_override_font_sizes/font_size = 15
 text = "Command executed: Choice A"
 horizontal_alignment = 1
 vertical_alignment = 1
-autowrap_mode = 2
+autowrap_mode = 3
 
 [node name="GameOverPanel" type="PanelContainer" parent="RootControl"]
 unique_name_in_owner = true
@@ -867,7 +816,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "Life support failed due to extreme solar radiation exposure."
 horizontal_alignment = 1
-autowrap_mode = 2
+autowrap_mode = 3
 
 [node name="GameOverStats" type="Label" parent="RootControl/GameOverPanel/Margin/VBox"]
 unique_name_in_owner = true
@@ -937,6 +886,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 14
 text = "Commander, the Astro-Care crew has survived all NASA DONKI & OSDR events!"
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="VictoryStats" type="Label" parent="RootControl/VictoryPanel/Margin/VBox"]
 unique_name_in_owner = true

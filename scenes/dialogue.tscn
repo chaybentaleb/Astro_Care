@@ -2,60 +2,189 @@
 
 [ext_resource type="Texture2D" uid="uid://bmdqlvo23dtpy" path="res://assets/images/Ecran_holographique_futuriste_cyan.png" id="1_jwyou"]
 [ext_resource type="Texture2D" uid="uid://2gu2jx1gcrfj" path="res://assets/images/21d623573beaa53c541b76f24bc4a940-removebg-preview.png" id="2_bfpow"]
-[ext_resource type="Script" uid="uid://cth5h802dk0en" path="res://scenes/dialogue.gd" id="2_led2e"]
 [ext_resource type="FontFile" uid="uid://bvlgjyhyx0k0j" path="res://assets/fonts/Nasalization Rg.otf" id="3_fyky8"]
-[ext_resource type="Script" uid="uid://ceb3eauu8siqq" path="res://scenes/label.gd" id="5_vogiq"]
+[ext_resource type="Script" path="res://scenes/dialogue.gd" id="4_diag"]
 
-[node name="dialogue" type="Sprite2D" unique_id=1749138945]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
+bg_color = Color(0.02, 0.05, 0.1, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.8, 1, 0.75)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0.65, 0.9, 0.35)
+shadow_size = 16
 
-[node name="dialogue" type="Sprite2D" parent="." unique_id=768126590]
-position = Vector2(0, 233.5)
-scale = Vector2(0.6588218, 0.15151516)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_start"]
+bg_color = Color(0.04, 0.18, 0.28, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.95, 0.8, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0.95, 0.8, 0.35)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_start_hover"]
+bg_color = Color(0.08, 0.28, 0.42, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 1, 0.9, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.2, 1, 0.9, 0.5)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_start_pressed"]
+bg_color = Color(0.02, 0.12, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 1, 0.95, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="DialogueLayer" type="CanvasLayer"]
+layer = 10
+script = ExtResource("4_diag")
+
+[node name="IntroControl" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DialogueAnchor" type="Control" parent="IntroControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -660.0
+offset_top = -300.0
+offset_right = 660.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="FramePanel" type="Panel" parent="IntroControl/DialogueAnchor"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
+
+[node name="FrameHoloTexture" type="TextureRect" parent="IntroControl/DialogueAnchor"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("1_jwyou")
-script = ExtResource("2_led2e")
+expand_mode = 1
 
-[node name="warning sign" type="Sprite2D" parent="." unique_id=2101908979]
-visibility_layer = 4
-position = Vector2(-444, 231.00002)
-scale = Vector2(0.17578125, 0.1796875)
+[node name="Margin" type="MarginContainer" parent="IntroControl/DialogueAnchor"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 22
+
+[node name="HBox" type="HBoxContainer" parent="IntroControl/DialogueAnchor/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="WarningIcon" type="TextureRect" parent="IntroControl/DialogueAnchor/Margin/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
 texture = ExtResource("2_bfpow")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=658663290]
+[node name="TextContainer" type="VBoxContainer" parent="IntroControl/DialogueAnchor/Margin/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 8
 
-[node name="1" type="Label" parent="CanvasLayer" unique_id=386484599]
-anchors_preset = -1
-anchor_left = -0.344
-anchor_top = 0.31300002
-anchor_right = 0.42100003
-anchor_bottom = 0.404
-offset_left = 563.288
-offset_top = 330.17596
-offset_right = 925.00793
-offset_bottom = 330.20798
+[node name="HeaderLabel" type="Label" parent="IntroControl/DialogueAnchor/Margin/HBox/TextContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.25, 1)
 theme_override_fonts/font = ExtResource("3_fyky8")
-theme_override_font_sizes/font_size = 22
-text = "Warning: Oxygen levels dropping in sector 4. Radiation spike detected. 
-You have 30 seconds before life support fails..."
-script = ExtResource("5_vogiq")
+theme_override_font_sizes/font_size = 14
+text = "⚠️ CRITICAL ALERT • SECTOR 4"
 
-[node name="2" type="Label" parent="CanvasLayer" unique_id=158712843]
-offset_left = 169.0
-offset_top = 532.0
-offset_right = 1651.0
-offset_bottom = 622.0
+[node name="DialogueText" type="Label" parent="IntroControl/DialogueAnchor/Margin/HBox/TextContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 68)
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
 theme_override_fonts/font = ExtResource("3_fyky8")
-theme_override_font_sizes/font_size = 22
-text = "Wake up, Commander. 
-You're drifting 40 million miles away from Earth on Astro_Care,
- and the margin for error is absolute zero."
+theme_override_font_sizes/font_size = 18
+text = "Warning: Oxygen levels dropping in sector 4. Radiation spike detected. You have 30 seconds before life support fails..."
+autowrap_mode = 3
 
-[node name="3" type="Label" parent="CanvasLayer" unique_id=1336726072]
-offset_left = 170.0
-offset_top = 537.0
-offset_right = 1416.0
-offset_bottom = 560.0
+[node name="ClickHint" type="Label" parent="IntroControl/DialogueAnchor/Margin/HBox/TextContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 0.75)
 theme_override_fonts/font = ExtResource("3_fyky8")
-theme_override_font_sizes/font_size = 22
-text = "Every swipe you make whether balancing scarce water,
- managing NASA-grade food rations, or shielding your crew from
- solar flares—is a matter of life and death."
+theme_override_font_sizes/font_size = 12
+text = "▶ Click anywhere to continue..."
+
+[node name="ActionBox" type="CenterContainer" parent="IntroControl/DialogueAnchor/Margin/HBox"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="BtnStart" type="Button" parent="IntroControl/DialogueAnchor/Margin/HBox/ActionBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(170, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 1, 0.85, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_fyky8")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_start")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_start_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_start_pressed")
+text = "START ▶"

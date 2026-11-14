@@ -63,14 +63,7 @@ extends CanvasLayer
 @onready var victory_rating: Label = %VictoryRating
 @onready var btn_restart_victory: Button = %BtnRestartVictory
 
-# Mode Selectors
-@onready var btn_mode_all: Button = %BtnModeAll if has_node("%BtnModeAll") else null
-@onready var btn_mode_donki: Button = %BtnModeDonki if has_node("%BtnModeDonki") else null
-@onready var btn_mode_osdr: Button = %BtnModeOsdr if has_node("%BtnModeOsdr") else null
-@onready var btn_mode_radlab: Button = %BtnModeRadlab if has_node("%BtnModeRadlab") else null
-@onready var btn_mode_csa: Button = %BtnModeCsa if has_node("%BtnModeCsa") else null
-@onready var btn_mode_mars: Button = %BtnModeMars if has_node("%BtnModeMars") else null
-
+# Mode Selectors removed - Events progress naturally in ALL mode
 var current_event_data: Dictionary = {}
 var is_processing_choice: bool = false
 var default_mode: String = "ALL"
@@ -79,6 +72,34 @@ func _ready() -> void:
 	feedback_panel.visible = false
 	game_over_panel.visible = false
 	victory_panel.visible = false
+
+	# Ensure responsive autowrapping on all title and description labels
+	if event_title:
+		event_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if event_scenario:
+		event_scenario.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_a_text:
+		label_choice_a_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_a_impact:
+		label_choice_a_impact.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_b_text:
+		label_choice_b_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_b_impact:
+		label_choice_b_impact.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_c_text:
+		label_choice_c_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_c_impact:
+		label_choice_c_impact.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_d_text:
+		label_choice_d_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if label_choice_d_impact:
+		label_choice_d_impact.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if feedback_label:
+		feedback_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if game_over_reason:
+		game_over_reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if victory_subtitle:
+		victory_subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	# Connect game manager signals
 	game_manager.resources_changed.connect(_on_resources_changed)
@@ -98,19 +119,6 @@ func _ready() -> void:
 		
 	btn_restart_game_over.pressed.connect(_on_restart_pressed)
 	btn_restart_victory.pressed.connect(_on_restart_pressed)
-
-	if btn_mode_all:
-		btn_mode_all.pressed.connect(func(): start_event_simulation("ALL"))
-	if btn_mode_donki:
-		btn_mode_donki.pressed.connect(func(): start_event_simulation("DONKI"))
-	if btn_mode_osdr:
-		btn_mode_osdr.pressed.connect(func(): start_event_simulation("OSDR"))
-	if btn_mode_radlab:
-		btn_mode_radlab.pressed.connect(func(): start_event_simulation("RADLAB"))
-	if btn_mode_csa:
-		btn_mode_csa.pressed.connect(func(): start_event_simulation("CSA"))
-	if btn_mode_mars:
-		btn_mode_mars.pressed.connect(func(): start_event_simulation("MARS"))
 
 	start_event_simulation(default_mode)
 
