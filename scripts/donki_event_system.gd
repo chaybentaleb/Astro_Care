@@ -340,6 +340,15 @@ func _on_game_won(stats: Dictionary) -> void:
 func _on_restart_pressed() -> void:
 	start_event_simulation(default_mode)
 
+func _on_encyclopedia_pressed() -> void:
+	# TODO: Connect Encyclopedia Flying Cards scene here
+	pass
+
+func _on_badges_pressed() -> void:
+	# TODO: Connect Badges system modal here
+	pass
+
+
 func _animate_event_entrance() -> void:
 	if root_control:
 		root_control.modulate.a = 0.85

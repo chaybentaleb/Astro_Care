@@ -15,6 +15,10 @@ signal intro_finished
 @onready var btn_start_mission: Button = %BtnStartMission
 @onready var btn_how_to_play: Button = %BtnHowToPlay
 
+# Top-Right Utility Buttons (Placeholder Hooks)
+@onready var btn_encyclopedia: Button = %BtnEncyclopedia
+@onready var btn_badges: Button = %BtnBadges
+
 # How To Play Modal
 @onready var how_to_play_modal: PanelContainer = %HowToPlayModal
 @onready var btn_close_how_to_play: Button = %BtnCloseHowToPlay
@@ -47,12 +51,33 @@ func _ensure_nodes() -> void:
 		btn_start_mission = get_node_or_null("%BtnStartMission")
 	if btn_how_to_play == null:
 		btn_how_to_play = get_node_or_null("%BtnHowToPlay")
+	if btn_encyclopedia == null:
+		btn_encyclopedia = get_node_or_null("%BtnEncyclopedia")
+	if btn_badges == null:
+		btn_badges = get_node_or_null("%BtnBadges")
 	if how_to_play_modal == null:
 		how_to_play_modal = get_node_or_null("%HowToPlayModal")
 	if btn_close_how_to_play == null:
 		btn_close_how_to_play = get_node_or_null("%BtnCloseHowToPlay")
 	if btn_got_it == null:
 		btn_got_it = get_node_or_null("%BtnGotIt")
+
+	# Ensure signal connections
+	if btn_start_mission and not btn_start_mission.pressed.is_connected(_on_start_mission_pressed):
+		btn_start_mission.pressed.connect(_on_start_mission_pressed)
+	if btn_how_to_play and not btn_how_to_play.pressed.is_connected(_on_how_to_play_pressed):
+		btn_how_to_play.pressed.connect(_on_how_to_play_pressed)
+	if btn_close_how_to_play and not btn_close_how_to_play.pressed.is_connected(_on_close_modal_pressed):
+		btn_close_how_to_play.pressed.connect(_on_close_modal_pressed)
+	if btn_got_it and not btn_got_it.pressed.is_connected(_on_close_modal_pressed):
+		btn_got_it.pressed.connect(_on_close_modal_pressed)
+	if btn_encyclopedia and not btn_encyclopedia.pressed.is_connected(_on_encyclopedia_pressed):
+		btn_encyclopedia.pressed.connect(_on_encyclopedia_pressed)
+	if btn_badges and not btn_badges.pressed.is_connected(_on_badges_pressed):
+		btn_badges.pressed.connect(_on_badges_pressed)
+
+func _enter_tree() -> void:
+	_ensure_nodes()
 
 func _ready() -> void:
 	_ensure_nodes()
@@ -84,6 +109,12 @@ func _ready() -> void:
 		btn_close_how_to_play.pressed.connect(_on_close_modal_pressed)
 	if btn_got_it and not btn_got_it.pressed.is_connected(_on_close_modal_pressed):
 		btn_got_it.pressed.connect(_on_close_modal_pressed)
+
+	# Connect top-right utility buttons
+	if btn_encyclopedia and not btn_encyclopedia.pressed.is_connected(_on_encyclopedia_pressed):
+		btn_encyclopedia.pressed.connect(_on_encyclopedia_pressed)
+	if btn_badges and not btn_badges.pressed.is_connected(_on_badges_pressed):
+		btn_badges.pressed.connect(_on_badges_pressed)
 
 	show_dialogue_step(0)
 
@@ -184,3 +215,11 @@ func _on_close_modal_pressed() -> void:
 	_ensure_nodes()
 	if how_to_play_modal:
 		how_to_play_modal.visible = false
+
+func _on_encyclopedia_pressed() -> void:
+	# TODO: Connect Encyclopedia Flying Cards scene here
+	pass
+
+func _on_badges_pressed() -> void:
+	# TODO: Connect Badges system modal here
+	pass
