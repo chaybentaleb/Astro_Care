@@ -70,6 +70,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 
 [node name="DialogueAnchor" type="Control" parent="IntroControl"]
 layout_mode = 1
@@ -84,6 +85,7 @@ offset_right = 660.0
 offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 1
 
 [node name="FramePanel" type="Panel" parent="IntroControl/DialogueAnchor"]
 layout_mode = 1
@@ -92,7 +94,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 
 [node name="FrameHoloTexture" type="TextureRect" parent="IntroControl/DialogueAnchor"]

@@ -15,9 +15,7 @@ func _ready() -> void:
 		sound.play()
 	
 	if red_flash:
-		await warning_flash()
-	
-	await get_tree().create_timer(0.3).timeout
+		warning_flash()
 	
 	start_intro_dialogue()
 
