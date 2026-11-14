@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://18o87nn5u5qa"]
+
+[ext_resource type="Texture2D" uid="uid://k8c58rdjl84j" path="res://assets/images/Pixel_Robot_Expression_Sprite_Set-removebg-preview.png" id="1_dxq1j"]
+[ext_resource type="Texture2D" uid="uid://bn3eikbpw4cr0" path="res://assets/images/Sans_titre__9_-removebg-preview.png" id="2_8pltb"]
+[ext_resource type="Texture2D" uid="uid://ctct6rsxfk1qy" path="res://assets/images/Sans_titre__10_-removebg-preview.png" id="3_8bwt8"]
+[ext_resource type="Texture2D" uid="uid://dc7vvw21ngqil" path="res://assets/images/Sans_titre__11_-removebg-preview_1.png" id="4_k5pwu"]
+
+[node name="astro-bot" type="Sprite2D" unique_id=811839506]
+
+[node name="PixelRobotExpressionSpriteSetRemovebgPreview" type="Sprite2D" parent="." unique_id=1085578309]
+position = Vector2(238, 214)
+texture = ExtResource("1_dxq1j")
+
+[node name="SansTitre9RemovebgPreview" type="Sprite2D" parent="." unique_id=1303884367]
+position = Vector2(737.00006, 223.00002)
+scale = Vector2(1.208, 1.17)
+texture = ExtResource("2_8pltb")
+
+[node name="SansTitre10RemovebgPreview" type="Sprite2D" parent="." unique_id=1569984546]
+position = Vector2(1367.0001, 202.5)
+scale = Vector2(1.124, 1.138)
+texture = ExtResource("3_8bwt8")
+
+[node name="SansTitre11RemovebgPreview1" type="Sprite2D" parent="." unique_id=1118094940]
+position = Vector2(1963.0001, 229.00002)
+scale = Vector2(1.034, 1.034)
+texture = ExtResource("4_k5pwu")
