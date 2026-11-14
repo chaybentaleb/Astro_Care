@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ct7c7l2ws1n8a"]
 
-[ext_resource type="Texture2D" uid="uid://dchc58gchly3u" path="res://assets/images/Base_spatiale_pixel_art_sur_Mars.png" id="1_o5qli"]
+[ext_resource type="Texture2D" uid="uid://bjgrqj2roe2g3" path="res://assets/images/Base_spatiale_pixel_art_sur_Mars.png" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://dhv24wwx4mmal" path="res://scenes/main.gd" id="1_sugp2"]
 [ext_resource type="AudioStream" uid="uid://dh4mp6dx2fjyd" path="res://assets/audio/error.mp3.mp3" id="3_sugp2"]
 
