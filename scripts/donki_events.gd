@@ -5,7 +5,7 @@ extends RefCounted
 ## Events 1 through 8 with exact resource impacts: Energy, Oxygen, Shield, Radiation in mSv.
 
 static func get_all_events() -> Array[Dictionary]:
-	return [
+	var events_list: Array[Dictionary] = [
 		{
 			"id": 1,
 			"title": "Small Solar Flare",
@@ -200,6 +200,14 @@ static func get_all_events() -> Array[Dictionary]:
 			}
 		}
 	]
+
+	# Check if live space weather telemetry is available via SpaceWeatherAPI autoload
+	if Engine.get_main_loop() and Engine.get_main_loop().root and Engine.get_main_loop().root.has_node("SpaceWeatherAPI"):
+		var api = Engine.get_main_loop().root.get_node_or_null("SpaceWeatherAPI")
+		if api and api.is_live_data_available:
+			return api.inject_into_donki_events(events_list)
+
+	return events_list
 
 static func format_effects(effects: Dictionary) -> String:
 	var parts: Array[String] = []

@@ -259,7 +259,20 @@ static func get_mood(event_number: int) -> String:
 ## Returns the dialogue string for a given event number.
 static func get_dialogue(event_number: int) -> String:
 	var data := get_event(event_number)
-	return data.get("dialogue", "")
+	var dialogue: String = data.get("dialogue", "")
+	
+	# Enhance dialogue with real-time parameters if SpaceWeatherAPI is active
+	if Engine.get_main_loop() and Engine.get_main_loop().root and Engine.get_main_loop().root.has_node("SpaceWeatherAPI"):
+		var api = Engine.get_main_loop().root.get_node_or_null("SpaceWeatherAPI")
+		if api and api.is_live_data_available:
+			if event_number == 1 and not api.live_parameters.solar_flare.class_type.is_empty():
+				return "Commander! Live NASA DONKI alert: Class %s solar flare detected! Radio interference is spiking. Take evasive action!" % api.live_parameters.solar_flare.class_type
+			elif event_number == 3 and api.live_parameters.cme.speed > 0:
+				return "Live NASA telemetry! CME plasma cloud measured at %d km/s incoming from the Sun! Hull under pressure, Commander!" % api.live_parameters.cme.speed
+			elif event_number == 4 and api.live_parameters.geomagnetic_storm.kp_index > 0:
+				return "Active geomagnetic storm detected with planetary Kp %.1f! Base lights and buslines are flickering!" % api.live_parameters.geomagnetic_storm.kp_index
+
+	return dialogue
 
 
 ## Returns the hint string for a given event number.

@@ -186,6 +186,12 @@ func _ready() -> void:
 		if not badge_manager.badge_unlocked.is_connected(_on_badge_unlocked):
 			badge_manager.badge_unlocked.connect(_on_badge_unlocked)
 
+	# Initialize SpaceWeatherAPI (autoload singleton)
+	var space_api = get_node_or_null("/root/SpaceWeatherAPI")
+	if space_api and space_api.has_signal("live_data_updated"):
+		if not space_api.live_data_updated.is_connected(_on_space_weather_updated):
+			space_api.live_data_updated.connect(_on_space_weather_updated)
+
 
 	if has_node("%BtnBadges"):
 		var btn_b: Button = get_node("%BtnBadges")
@@ -223,7 +229,22 @@ func start_event_simulation(mode: String = "ALL") -> void:
 	feedback_panel.visible = false
 	is_processing_choice = false
 	
+	# Ensure SpaceWeatherAPI has latest data for session
+	var space_api = get_node_or_null("/root/SpaceWeatherAPI")
+	if space_api and not space_api.is_live_data_available:
+		space_api.fetch_live_space_weather()
+	
 	game_manager.start_game(60, 60, 60, 0.0, 80, 40, 60, mode)
+
+func _on_space_weather_updated(_live_data: Dictionary) -> void:
+	# If we are currently viewing a space weather event (1-8), reload the event view with live parameters
+	if current_event_data and current_event_data.get("id", 0) <= 8 and not is_processing_choice:
+		var ev_id = current_event_data.get("id", 0)
+		var donki_events = DonkiEvents.get_all_events()
+		for ev in donki_events:
+			if ev.get("id", 0) == ev_id:
+				_on_event_presented(ev, game_manager.current_event_index + 1, game_manager.events.size())
+				break
 
 func _on_event_presented(event_data: Dictionary, current_idx: int, total_count: int) -> void:
 	current_event_data = event_data
