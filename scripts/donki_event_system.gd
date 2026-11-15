@@ -44,6 +44,13 @@ extends CanvasLayer
 @onready var btn_close_bubble: Button = %BtnCloseBubble if has_node("%BtnCloseBubble") else null
 @onready var bubble_prompt: Label = %BubblePrompt if has_node("%BubblePrompt") else null
 
+# Hint & Encyclopedia inside speech bubble
+@onready var btn_bubble_hint: Button = %BtnBubbleHint if has_node("%BtnBubbleHint") else null
+@onready var btn_bubble_encyclopedia: Button = %BtnBubbleEncyclopedia if has_node("%BtnBubbleEncyclopedia") else null
+@onready var hint_panel: PanelContainer = %HintPanel if has_node("%HintPanel") else null
+@onready var hint_text: Label = %HintText if has_node("%HintText") else null
+@onready var btn_bubble_encyclopedia_link: Button = %BtnBubbleEncyclopediaLink if has_node("%BtnBubbleEncyclopediaLink") else null
+
 # Audio Stream Players
 @onready var audio_mood_popup: AudioStreamPlayer = %AudioMoodPopup if has_node("%AudioMoodPopup") else null
 @onready var audio_typewriter: AudioStreamPlayer = %AudioTypewriter if has_node("%AudioTypewriter") else null
@@ -186,6 +193,15 @@ func _ready() -> void:
 
 	if btn_close_bubble and not btn_close_bubble.pressed.is_connected(_close_speech_bubble):
 		btn_close_bubble.pressed.connect(_close_speech_bubble)
+
+	if btn_bubble_hint and not btn_bubble_hint.pressed.is_connected(_on_bubble_hint_pressed):
+		btn_bubble_hint.pressed.connect(_on_bubble_hint_pressed)
+
+	if btn_bubble_encyclopedia and not btn_bubble_encyclopedia.pressed.is_connected(_on_bubble_encyclopedia_pressed):
+		btn_bubble_encyclopedia.pressed.connect(_on_bubble_encyclopedia_pressed)
+
+	if btn_bubble_encyclopedia_link and not btn_bubble_encyclopedia_link.pressed.is_connected(_on_bubble_encyclopedia_pressed):
+		btn_bubble_encyclopedia_link.pressed.connect(_on_bubble_encyclopedia_pressed)
 
 	start_event_simulation(default_mode)
 
@@ -571,6 +587,16 @@ func _display_speech_bubble(text_to_speak: String) -> void:
 	speech_bubble.visible = true
 	speech_bubble.modulate.a = 0.0
 
+	# Hide hint panel on fresh open
+	if hint_panel:
+		hint_panel.visible = false
+
+	# Pre-load hint text for current event
+	var ev_id: int = current_event_data.get("id", 1)
+	if hint_text:
+		var h = AstrobotEventsData.get_hint(ev_id)
+		hint_text.text = "💡 %s" % h if not h.is_empty() else "💡 Hint: Monitor resources closely!"
+
 	# Instantly play mood popup sound effect
 	_play_mood_popup_sound(active_mood)
 
@@ -635,25 +661,55 @@ func _start_typewriter(target_text: String) -> void:
 
 	typewriter_tween.finished.connect(func():
 		is_typewriting = false
+		_stop_all_audio()
 	)
 
 func _finish_typewriting() -> void:
 	if typewriter_tween:
 		typewriter_tween.kill()
 	is_typewriting = false
+	_stop_all_audio()
 	if bubble_text:
 		bubble_text.text = current_dialogue_target
 
 func _close_speech_bubble() -> void:
 	if not speech_bubble or not speech_bubble.visible:
 		return
+	_stop_all_audio()
 	if typewriter_tween:
 		typewriter_tween.kill()
 	is_typewriting = false
+	if hint_panel:
+		hint_panel.visible = false
 	var tween = create_tween()
 	tween.tween_property(speech_bubble, "modulate:a", 0.0, 0.15)
 	await tween.finished
 	speech_bubble.visible = false
+
+func _on_bubble_hint_pressed() -> void:
+	if not hint_panel:
+		return
+	var ev_id: int = current_event_data.get("id", 1)
+	var hint: String = AstrobotEventsData.get_hint(ev_id)
+	if hint.is_empty():
+		hint = "💡 Hint: Monitor your resources closely, Commander!"
+	if hint_text:
+		hint_text.text = "💡 %s" % hint
+
+	hint_panel.visible = not hint_panel.visible
+	if hint_panel.visible:
+		hint_panel.modulate.a = 0.0
+		var tween = create_tween()
+		tween.tween_property(hint_panel, "modulate:a", 1.0, 0.2)
+
+func _on_bubble_encyclopedia_pressed() -> void:
+	_on_encyclopedia_pressed()
+
+func _stop_all_audio() -> void:
+	if audio_typewriter and audio_typewriter.playing:
+		audio_typewriter.stop()
+	if audio_mood_popup and audio_mood_popup.playing:
+		audio_mood_popup.stop()
 
 
 func _animate_event_entrance() -> void:
