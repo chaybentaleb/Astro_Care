@@ -113,6 +113,9 @@ var typewriter_tween: Tween = null
 var is_typewriting: bool = false
 var active_mood: String = "Optimal"
 
+# Badge Manager reference (autoload singleton)
+var badge_manager: Node = null
+
 func _ready() -> void:
 	feedback_panel.visible = false
 	game_over_panel.visible = false
@@ -164,6 +167,12 @@ func _ready() -> void:
 		
 	btn_restart_game_over.pressed.connect(_on_restart_pressed)
 	btn_restart_victory.pressed.connect(_on_restart_pressed)
+
+	# Initialize BadgeManager (autoload singleton)
+	badge_manager = get_node_or_null("/root/BadgeManager")
+	if badge_manager and badge_manager.has_signal("badge_unlocked"):
+		if not badge_manager.badge_unlocked.is_connected(_on_badge_unlocked):
+			badge_manager.badge_unlocked.connect(_on_badge_unlocked)
 
 
 	if has_node("%BtnBadges"):
@@ -365,6 +374,9 @@ func _on_decision_applied(choice_label: String, delta: Dictionary, outcome_messa
 	tween.tween_property(feedback_panel, "modulate:a", 0.0, 0.25)
 	await tween.finished
 	feedback_panel.visible = false
+	
+	# Check badge conditions after each decision
+	_check_badges_after_decision()
 
 func _on_harvest_matured(crop_name: String, food_amount: int) -> void:
 	print("🌱 Greenhouse Harvest Event: %s produced +%d Food" % [crop_name, food_amount])
@@ -399,6 +411,9 @@ func _on_game_won(stats: Dictionary) -> void:
 	tween.tween_property(victory_panel, "modulate:a", 1.0, 0.4)
 
 func _on_restart_pressed() -> void:
+	# Reset badge manager on restart
+	if badge_manager and badge_manager.has_method("reset"):
+		badge_manager.reset()
 	start_event_simulation(default_mode)
 
 func _on_encyclopedia_pressed() -> void:
@@ -682,3 +697,29 @@ func _animate_event_entrance() -> void:
 		root_control.modulate.a = 0.85
 		var tween = create_tween()
 		tween.tween_property(root_control, "modulate:a", 1.0, 0.2)
+
+# ─── Badge System Integration ──────────────────────────────────────
+
+var _last_choice_key: String = ""
+
+func _check_badges_after_decision() -> void:
+	if not badge_manager or not game_manager:
+		return
+	var ev_id: int = current_event_data.get("id", 0)
+	var stats: Dictionary = game_manager.get_stats()
+	var history: Array[Dictionary] = game_manager.decision_history
+	# Determine the last choice key from history
+	var choice_key: String = "A"
+	if history.size() > 0:
+		choice_key = history[-1].get("choice_key", "A")
+	badge_manager.on_decision_made(ev_id, choice_key, stats, history)
+
+func _on_badge_unlocked(badge_id: String, badge_title: String, badge_icon: String) -> void:
+	# Show Astrobot celebration popup in the speech bubble
+	var celebrate_text = "🏆 Congrats, Commander! New Badge Unlocked!\n\n%s %s\n\nYou've earned a new Expedition Award!" % [badge_icon, badge_title]
+	_update_astrobot_mood("Optimal", current_event_data.get("id", 1))
+	_display_speech_bubble(celebrate_text)
+
+	# If badges modal is open, animate the unlock card
+	if badges_instance and is_instance_valid(badges_instance) and badges_instance.visible:
+		badges_instance.animate_unlock_card(badge_id)

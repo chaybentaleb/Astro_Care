@@ -300,7 +300,13 @@ func get_stats() -> Dictionary:
 	res["total_events"] = events.size()
 	res["radiation_limit"] = MAX_RADIATION_LIMIT
 	res["game_mode"] = game_mode
+	res["rating"] = calculate_rating()
 	return res
+
+func get_current_event_id() -> int:
+	if current_event_index < events.size():
+		return events[current_event_index].get("id", current_event_index + 1)
+	return 0
 
 func calculate_rating() -> String:
 	var score_calc: float = 0.0

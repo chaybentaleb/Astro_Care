@@ -19,7 +19,7 @@ const BADGES: Array[Dictionary] = [
 		"icon": "❤️",
 		"category": "NASA OSDR",
 		"desc": "Maintain crew physical and mental health at 70% or higher through medical countermeasures.",
-		"requirement": "Keep crew health >= 70% across astronaut health dilemmas."
+		"requirement": "Keep crew health >= 70% across all astronaut health dilemmas (Events 9-14)."
 	},
 	{
 		"id": "badge_dosimetry_master",
@@ -27,7 +27,7 @@ const BADGES: Array[Dictionary] = [
 		"icon": "☢️",
 		"category": "NASA RADLAB",
 		"desc": "Navigate deep-space Galactic Cosmic Rays keeping cumulative radiation exposure under 40 mSv.",
-		"requirement": "Maintain total radiation < 40.0 mSv through RadLab dosimetry events."
+		"requirement": "Maintain total radiation < 40.0 mSv through RadLab dosimetry events (Events 15-18)."
 	},
 	{
 		"id": "badge_martian_botanist",
@@ -35,7 +35,7 @@ const BADGES: Array[Dictionary] = [
 		"icon": "🌱",
 		"category": "CSA AGRICULTURE",
 		"desc": "Successfully cultivate hydroponic crops and reclaim water in the closed-loop greenhouse.",
-		"requirement": "Mature at least 1 harvest and complete CSA hydroponic events."
+		"requirement": "Complete greenhouse cultivation and water recycling events (Events 19, 21, 24)."
 	},
 	{
 		"id": "badge_stem_scholar",
@@ -43,7 +43,7 @@ const BADGES: Array[Dictionary] = [
 		"icon": "🎓",
 		"category": "CSA STEM",
 		"desc": "Demonstrate space science knowledge by answering all CSA STEM quizzes correctly.",
-		"requirement": "Answer the physics, physiology, and heliophysics quizzes correctly."
+		"requirement": "Answer all CSA STEM quiz events (Events 25, 26, 27) correctly."
 	},
 	{
 		"id": "badge_mars_commander",
@@ -51,7 +51,7 @@ const BADGES: Array[Dictionary] = [
 		"icon": "🏆",
 		"category": "GRAND EXPEDITION",
 		"desc": "Survive the entire 30-Sol Martian expedition with an S or A Commander Rating.",
-		"requirement": "Complete all 30 mission events and earn superior expedition leader honors."
+		"requirement": "Complete all 30 mission events and earn S or A commander rating."
 	}
 ]
 
@@ -63,35 +63,3 @@ static func get_badge_by_id(badge_id: String) -> Dictionary:
 		if b.get("id", "") == badge_id:
 			return b
 	return {}
-
-## Evaluates unlock status for a badge given game statistics & decision history
-static func is_badge_unlocked(badge_id: String, stats: Dictionary, decision_history: Array[Dictionary]) -> bool:
-	var completed: int = stats.get("events_completed", 0)
-	var health: int = stats.get("health", 0)
-	var radiation: float = float(stats.get("radiation", 0.0))
-	var score: int = stats.get("score", 0)
-
-	match badge_id:
-		"badge_solar_shield":
-			# Survived at least through event 8 (DONKI module completed)
-			return completed >= 8
-		"badge_flight_surgeon":
-			# Health >= 70% after surviving through OSDR (event 14+)
-			return completed >= 14 and health >= 70
-		"badge_dosimetry_master":
-			# Completed RadLab (event 18+) with radiation under 40 mSv
-			return completed >= 18 and radiation < 40.0
-		"badge_martian_botanist":
-			# Reached event 24 and made greenhouse decisions
-			return completed >= 24
-		"badge_stem_scholar":
-			# Reached event 28+ with correct quiz choices
-			return completed >= 28 and score >= 3
-		"badge_mars_commander":
-			# Completed all 30 events with S or A rating
-			if completed >= 30:
-				var rating: String = stats.get("rating", "")
-				return rating.begins_with("S") or rating.begins_with("A") or (health >= 60 and radiation < 80.0)
-			return false
-		_:
-			return false
