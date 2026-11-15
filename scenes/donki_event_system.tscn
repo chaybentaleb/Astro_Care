@@ -163,6 +163,34 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_speech_bubble"]
+bg_color = Color(0.04, 0.08, 0.14, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.83, 1, 0.85)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0.7, 1, 0.25)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_avatar_frame"]
+bg_color = Color(0.05, 0.09, 0.16, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.75, 0.95, 0.75)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0.6, 0.9, 0.3)
+shadow_size = 10
+
 [node name="DonkiEventSystem" type="CanvasLayer"]
 layer = 5
 script = ExtResource("1_sysctl")
@@ -580,39 +608,6 @@ theme_override_font_sizes/font_size = 15
 text = "Solar sensors detect a moderate C-class flare bursting from solar active region AR-3412. An ionization wavefront is approaching our forward telemetry arrays."
 autowrap_mode = 3
 
-[node name="BotAdvicePanel" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_bot_advice")
-
-[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
-
-[node name="HBox" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="BotIcon" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel/Margin/HBox"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "🤖"
-
-[node name="BotAdviceText" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel/Margin/HBox"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.3, 0.95, 0.7, 1)
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 13
-text = "Astro-Bot: \"Analyzing solar flare telemetry...\""
-autowrap_mode = 3
-
 [node name="ChoicesTitle" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
@@ -995,3 +990,160 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "PLAY AGAIN"
+
+[node name="AstrobotSidebar" type="Control" parent="RootControl"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 35.0
+offset_top = -680.0
+offset_right = 445.0
+offset_bottom = -25.0
+grow_vertical = 0
+mouse_filter = 0
+
+[node name="SpeechBubble" type="PanelContainer" parent="RootControl/AstrobotSidebar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 340.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_speech_bubble")
+
+[node name="Margin" type="MarginContainer" parent="RootControl/AstrobotSidebar/SpeechBubble"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BubbleHeader" type="HBoxContainer" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin/VBox"]
+layout_mode = 2
+
+[node name="BubbleTitle" type="Label" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin/VBox/BubbleHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+text = "🤖 ASTRO-BOT ADVISORY"
+
+[node name="BtnCloseBubble" type="Button" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin/VBox/BubbleHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
+text = "✕"
+flat = true
+
+[node name="HSeparator" type="HSeparator" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin/VBox"]
+layout_mode = 2
+
+[node name="BubbleScroll" type="ScrollContainer" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="BubbleText" type="Label" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin/VBox/BubbleScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+text = "Commander! Small solar flare detected! Radio interference is spiking. Take evasive action!"
+autowrap_mode = 3
+
+[node name="BubblePrompt" type="Label" parent="RootControl/AstrobotSidebar/SpeechBubble/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 0.7)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
+text = "▶ Click Astrobot or ✕ to close"
+horizontal_alignment = 2
+
+[node name="AvatarFrame" type="PanelContainer" parent="RootControl/AstrobotSidebar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -115.0
+offset_top = -290.0
+offset_right = 115.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_avatar_frame")
+
+[node name="Margin" type="MarginContainer" parent="RootControl/AstrobotSidebar/AvatarFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="RootControl/AstrobotSidebar/AvatarFrame/Margin"]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnAstrobotAvatar" type="TextureButton" parent="RootControl/AstrobotSidebar/AvatarFrame/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(175, 175)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="AstrobotNameplate" type="Label" parent="RootControl/AstrobotSidebar/AvatarFrame/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
+text = "🤖 ASTRO-BOT"
+horizontal_alignment = 1
+
+[node name="AstrobotMoodBadge" type="Label" parent="RootControl/AstrobotSidebar/AvatarFrame/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 0.5, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
+text = "[ OPTIMAL ]"
+horizontal_alignment = 1
+
+[node name="ClickPrompt" type="Label" parent="RootControl/AstrobotSidebar/AvatarFrame/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 0.85)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
+text = "( CLICK TO TALK )"
+horizontal_alignment = 1
+
+[node name="AudioMoodPopup" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+volume_db = -6.0
+
+[node name="AudioTypewriter" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+volume_db = -10.0

@@ -31,8 +31,24 @@ extends CanvasLayer
 @onready var event_title: Label = %EventTitle
 @onready var event_scenario: Label = %EventScenario
 
-# Astro-Bot Tactical Advice
+# Astro-Bot Tactical Advice & Sidebar
 @onready var btn_hint: Button = %BtnHint if has_node("%BtnHint") else null
+@onready var astrobot_sidebar: Control = %AstrobotSidebar if has_node("%AstrobotSidebar") else null
+@onready var btn_astrobot_avatar: TextureButton = %BtnAstrobotAvatar if has_node("%BtnAstrobotAvatar") else null
+@onready var astrobot_nameplate: Label = %AstrobotNameplate if has_node("%AstrobotNameplate") else null
+@onready var astrobot_mood_badge: Label = %AstrobotMoodBadge if has_node("%AstrobotMoodBadge") else null
+@onready var avatar_frame: PanelContainer = %AvatarFrame if has_node("%AvatarFrame") else null
+@onready var speech_bubble: PanelContainer = %SpeechBubble if has_node("%SpeechBubble") else null
+@onready var bubble_title: Label = %BubbleTitle if has_node("%BubbleTitle") else null
+@onready var bubble_text: Label = %BubbleText if has_node("%BubbleText") else null
+@onready var btn_close_bubble: Button = %BtnCloseBubble if has_node("%BtnCloseBubble") else null
+@onready var bubble_prompt: Label = %BubblePrompt if has_node("%BubblePrompt") else null
+
+# Audio Stream Players
+@onready var audio_mood_popup: AudioStreamPlayer = %AudioMoodPopup if has_node("%AudioMoodPopup") else null
+@onready var audio_typewriter: AudioStreamPlayer = %AudioTypewriter if has_node("%AudioTypewriter") else null
+
+# Legacy panel references (safely null if removed)
 @onready var bot_advice_panel: PanelContainer = %BotAdvicePanel if has_node("%BotAdvicePanel") else null
 @onready var bot_advice_text: Label = %BotAdviceText if has_node("%BotAdviceText") else null
 @onready var bot_icon: Label = %BotIcon if has_node("%BotIcon") else null
@@ -79,6 +95,22 @@ var badges_instance: BadgesModal = null
 var current_event_data: Dictionary = {}
 var is_processing_choice: bool = false
 var default_mode: String = "ALL"
+
+# Astrobot Mood Textures & Audio Streams
+var tex_optimal: Texture2D = null
+var tex_critical: Texture2D = null
+var tex_warning: Texture2D = null
+var tex_science: Texture2D = null
+
+var sfx_alert_red: AudioStream = null
+var sfx_warning_yellow: AudioStream = null
+var sfx_optimal_beep: AudioStream = null
+var sfx_astrobot_speak: AudioStream = null
+
+var current_dialogue_target: String = ""
+var typewriter_tween: Tween = null
+var is_typewriting: bool = false
+var active_mood: String = "Optimal"
 
 func _ready() -> void:
 	feedback_panel.visible = false
@@ -145,6 +177,16 @@ func _ready() -> void:
 	if btn_hint and not btn_hint.pressed.is_connected(_on_hint_pressed):
 		btn_hint.pressed.connect(_on_hint_pressed)
 
+	# Initialize Astrobot assets, idle animation, and click-to-talk
+	_load_astrobot_assets()
+	_start_astrobot_idle_animation()
+
+	if btn_astrobot_avatar and not btn_astrobot_avatar.pressed.is_connected(_on_astrobot_avatar_pressed):
+		btn_astrobot_avatar.pressed.connect(_on_astrobot_avatar_pressed)
+
+	if btn_close_bubble and not btn_close_bubble.pressed.is_connected(_close_speech_bubble):
+		btn_close_bubble.pressed.connect(_close_speech_bubble)
+
 	start_event_simulation(default_mode)
 
 func start_event_simulation(mode: String = "ALL") -> void:
@@ -202,20 +244,12 @@ func _on_event_presented(event_data: Dictionary, current_idx: int, total_count: 
 	event_title.text = "%d. %s" % [ev_id, event_data.get("title", "Unknown Event")]
 	event_scenario.text = event_data.get("scenario", "")
 	
-	# Astro-Bot Tactical Advice Setup
-	if bot_advice_panel:
-		bot_advice_panel.visible = false
-	if bot_advice_text:
-		bot_advice_text.text = event_data.get("bot_advice", "Astro-Bot: \"Analyze telemetry carefully, Commander.\"")
-	if bot_icon:
-		if ev_id >= 28 or ev_id <= 8:
-			bot_icon.modulate = Color(1.0, 0.4, 0.25) # Alert Red/Orange
-		elif ev_id >= 25:
-			bot_icon.modulate = Color(0.85, 0.45, 1.0) # STEM Purple
-		elif ev_id >= 19:
-			bot_icon.modulate = Color(0.35, 1.0, 0.45) # Bio Green
-		else:
-			bot_icon.modulate = Color(0.2, 0.9, 1.0) # Telemetry Cyan
+	# Update Astrobot Character Mood & Appearance
+	var mood = AstrobotEventsData.get_mood(ev_id)
+	if mood == "Unknown" or mood.is_empty():
+		mood = "Optimal"
+	_update_astrobot_mood(mood, ev_id)
+	_close_speech_bubble()
 	
 	# Choice A Setup
 	var choice_a = event_data.get("choice_a", {})
@@ -398,13 +432,228 @@ func _on_badges_pressed() -> void:
 	badges_instance.open(stats, history)
 
 func _on_hint_pressed() -> void:
-	if not bot_advice_panel:
+	var ev_id: int = current_event_data.get("id", 1)
+	var hint_text: String = AstrobotEventsData.get_hint(ev_id)
+	if hint_text.is_empty():
+		hint_text = "Hint: Monitor energy, oxygen, and radiation closely!"
+	_display_speech_bubble(hint_text)
+
+func _load_astrobot_assets() -> void:
+	# Textures (load clean dedicated files or fallback to existing assets)
+	if ResourceLoader.exists("res://assets/images/astrobot_optimal.png"):
+		tex_optimal = load("res://assets/images/astrobot_optimal.png")
+	elif ResourceLoader.exists("res://assets/images/Sans_titre__9_-removebg-preview.png"):
+		tex_optimal = load("res://assets/images/Sans_titre__9_-removebg-preview.png")
+
+	if ResourceLoader.exists("res://assets/images/astrobot_critical.png"):
+		tex_critical = load("res://assets/images/astrobot_critical.png")
+	elif ResourceLoader.exists("res://assets/images/Sans_titre__10_-removebg-preview.png"):
+		tex_critical = load("res://assets/images/Sans_titre__10_-removebg-preview.png")
+
+	if ResourceLoader.exists("res://assets/images/astrobot_warning.png"):
+		tex_warning = load("res://assets/images/astrobot_warning.png")
+	elif ResourceLoader.exists("res://assets/images/Sans_titre__11_-removebg-preview_1.png"):
+		tex_warning = load("res://assets/images/Sans_titre__11_-removebg-preview_1.png")
+
+	if ResourceLoader.exists("res://assets/images/astrobot_science.png"):
+		tex_science = load("res://assets/images/astrobot_science.png")
+	elif ResourceLoader.exists("res://assets/images/Pixel_Robot_Expression_Sprite_Set-removebg-preview.png"):
+		tex_science = load("res://assets/images/Pixel_Robot_Expression_Sprite_Set-removebg-preview.png")
+
+	# Audio (load clean .wav or fallback to existing sound effects)
+	if ResourceLoader.exists("res://assets/audios/alert_red.wav"):
+		sfx_alert_red = load("res://assets/audios/alert_red.wav")
+	elif ResourceLoader.exists("res://assets/audio/sound effects/Error.mp3"):
+		sfx_alert_red = load("res://assets/audio/sound effects/Error.mp3")
+
+	if ResourceLoader.exists("res://assets/audios/warning_yellow.wav"):
+		sfx_warning_yellow = load("res://assets/audios/warning_yellow.wav")
+	elif ResourceLoader.exists("res://assets/audio/sound effects/pop up bot.mp3"):
+		sfx_warning_yellow = load("res://assets/audio/sound effects/pop up bot.mp3")
+
+	if ResourceLoader.exists("res://assets/audios/optimal_beep.wav"):
+		sfx_optimal_beep = load("res://assets/audios/optimal_beep.wav")
+	elif ResourceLoader.exists("res://assets/audio/sound effects/success.mp3.mp3"):
+		sfx_optimal_beep = load("res://assets/audio/sound effects/success.mp3.mp3")
+
+	if ResourceLoader.exists("res://assets/audios/astrobot_speak.wav"):
+		sfx_astrobot_speak = load("res://assets/audios/astrobot_speak.wav")
+	elif ResourceLoader.exists("res://assets/audio/sound effects/typing.mp3"):
+		sfx_astrobot_speak = load("res://assets/audio/sound effects/typing.mp3")
+
+func _start_astrobot_idle_animation() -> void:
+	if not avatar_frame:
 		return
-	bot_advice_panel.visible = not bot_advice_panel.visible
-	if bot_advice_panel.visible:
-		bot_advice_panel.modulate.a = 0.0
-		var tween = create_tween()
-		tween.tween_property(bot_advice_panel, "modulate:a", 1.0, 0.2)
+	var base_pos_y: float = avatar_frame.position.y
+	var tween = create_tween().set_loops()
+	tween.tween_property(avatar_frame, "position:y", base_pos_y - 7.0, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(avatar_frame, "position:y", base_pos_y, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func _update_astrobot_mood(mood: String, ev_id: int) -> void:
+	active_mood = mood
+	var mood_color := Color(0, 0.85, 1)
+	var badge_text := "[ OPTIMAL ]"
+	var current_tex: Texture2D = tex_optimal
+
+	match mood:
+		"Critical":
+			current_tex = tex_critical
+			mood_color = Color(1.0, 0.28, 0.28) # Red alarm
+			badge_text = "[ CRITICAL ALARM ]"
+		"Warning":
+			current_tex = tex_warning
+			mood_color = Color(1.0, 0.82, 0.2) # Yellow caution
+			badge_text = "[ HAZARD WARNING ]"
+		"Optimal":
+			current_tex = tex_optimal
+			mood_color = Color(0.25, 0.95, 0.55) # Green smile
+			badge_text = "[ OPTIMAL STATUS ]"
+		"Science":
+			current_tex = tex_science
+			mood_color = Color(0.1, 0.88, 1.0) # Blue analytical
+			badge_text = "[ SCIENTIFIC QUERY ]"
+
+	if btn_astrobot_avatar and current_tex:
+		btn_astrobot_avatar.texture_normal = current_tex
+		btn_astrobot_avatar.texture_hover = current_tex
+		btn_astrobot_avatar.texture_pressed = current_tex
+
+	if astrobot_mood_badge:
+		astrobot_mood_badge.text = badge_text
+		astrobot_mood_badge.add_theme_color_override("font_color", mood_color)
+
+	if bubble_title:
+		bubble_title.text = "🤖 ASTRO-BOT • %s" % badge_text
+		bubble_title.add_theme_color_override("font_color", mood_color)
+
+	# Update stylebox borders to glow in matching mood color
+	if avatar_frame:
+		var style = avatar_frame.get_theme_stylebox("panel")
+		if style is StyleBoxFlat:
+			var new_style: StyleBoxFlat = style.duplicate()
+			new_style.border_color = mood_color
+			avatar_frame.add_theme_stylebox_override("panel", new_style)
+
+	if speech_bubble:
+		var style = speech_bubble.get_theme_stylebox("panel")
+		if style is StyleBoxFlat:
+			var new_style: StyleBoxFlat = style.duplicate()
+			new_style.border_color = mood_color
+			new_style.shadow_color = Color(mood_color.r, mood_color.g, mood_color.b, 0.25)
+			speech_bubble.add_theme_stylebox_override("panel", new_style)
+
+func _on_astrobot_avatar_pressed() -> void:
+	if not speech_bubble:
+		return
+
+	# If currently typing, click instantly completes the full dialogue
+	if is_typewriting:
+		_finish_typewriting()
+		return
+
+	# If already open and done, click closes it
+	if speech_bubble.visible:
+		_close_speech_bubble()
+		return
+
+	# Open and type out active event dialogue
+	var ev_id: int = current_event_data.get("id", 1)
+	var dialogue: String = AstrobotEventsData.get_dialogue(ev_id)
+	if dialogue.is_empty():
+		dialogue = current_event_data.get("bot_advice", "Commander, telemetry is standing by.")
+	_display_speech_bubble(dialogue)
+
+func _display_speech_bubble(text_to_speak: String) -> void:
+	if not speech_bubble:
+		return
+
+	current_dialogue_target = text_to_speak
+	speech_bubble.visible = true
+	speech_bubble.modulate.a = 0.0
+
+	# Instantly play mood popup sound effect
+	_play_mood_popup_sound(active_mood)
+
+	# Reactive bounce animation on avatar frame
+	if avatar_frame:
+		var bounce = create_tween()
+		bounce.tween_property(avatar_frame, "scale", Vector2(0.94, 0.94), 0.08)
+		bounce.tween_property(avatar_frame, "scale", Vector2(1.0, 1.0), 0.12)
+
+	# Fade in speech bubble
+	var tween = create_tween()
+	tween.tween_property(speech_bubble, "modulate:a", 1.0, 0.18)
+
+	# Start character-by-character typewriter effect
+	_start_typewriter(text_to_speak)
+
+func _play_mood_popup_sound(mood: String) -> void:
+	if not audio_mood_popup:
+		return
+	var stream: AudioStream = null
+	match mood:
+		"Critical":
+			stream = sfx_alert_red
+		"Warning":
+			stream = sfx_warning_yellow
+		"Optimal":
+			stream = sfx_optimal_beep
+		"Science":
+			stream = sfx_optimal_beep if sfx_optimal_beep else sfx_warning_yellow
+		_:
+			stream = sfx_optimal_beep
+
+	if stream:
+		audio_mood_popup.stream = stream
+		audio_mood_popup.play()
+
+func _start_typewriter(target_text: String) -> void:
+	if not bubble_text:
+		return
+	if typewriter_tween:
+		typewriter_tween.kill()
+
+	bubble_text.text = ""
+	is_typewriting = true
+
+	typewriter_tween = create_tween()
+	var char_duration := 0.024
+	var text_len := target_text.length()
+
+	for i in range(1, text_len + 1):
+		typewriter_tween.tween_callback(func():
+			if not is_typewriting:
+				return
+			bubble_text.text = target_text.substr(0, i)
+			# Play typing sound periodically
+			if i % 3 == 0 and audio_typewriter and sfx_astrobot_speak:
+				audio_typewriter.stream = sfx_astrobot_speak
+				audio_typewriter.pitch_scale = randf_range(0.95, 1.1)
+				audio_typewriter.play()
+		)
+		typewriter_tween.tween_interval(char_duration)
+
+	typewriter_tween.finished.connect(func():
+		is_typewriting = false
+	)
+
+func _finish_typewriting() -> void:
+	if typewriter_tween:
+		typewriter_tween.kill()
+	is_typewriting = false
+	if bubble_text:
+		bubble_text.text = current_dialogue_target
+
+func _close_speech_bubble() -> void:
+	if not speech_bubble or not speech_bubble.visible:
+		return
+	if typewriter_tween:
+		typewriter_tween.kill()
+	is_typewriting = false
+	var tween = create_tween()
+	tween.tween_property(speech_bubble, "modulate:a", 0.0, 0.15)
+	await tween.finished
+	speech_bubble.visible = false
 
 
 func _animate_event_entrance() -> void:
