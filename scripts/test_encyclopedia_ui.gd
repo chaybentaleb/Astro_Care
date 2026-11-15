@@ -36,7 +36,7 @@ func _init() -> void:
 	assert(enc.card_counter.text == "CARD 1 OF 19", "Card counter text mismatch: %s" % enc.card_counter.text)
 	assert("flr_20261107" in enc.card_id_label.text.to_lower(), "Initial card must be flr_20261107")
 	assert("M1.9-class" in enc.fact_text.text, "Fact text mismatch on card 1")
-	assert("DONKI" in enc.source_text.text, "Source text mismatch on card 1")
+	assert("Based on real space data" in enc.source_text.text, "Source text mismatch on card 1")
 	assert(enc.card_icon.text == "☀️", "Card icon mismatch on card 1")
 	print("✓ Initial state verified: Card 1/19 (flr_20261107) correctly displayed.")
 

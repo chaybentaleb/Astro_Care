@@ -296,12 +296,16 @@ func _display_card_data(index: int) -> void:
 		fact_text.text = card.get("fact", "")
 		fact_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		
+	var source_val: String = card.get("source", "Based on real space data")
+	if not source_val.begins_with("Source:"):
+		source_val = "Source: " + source_val
+
 	if source_label:
-		source_label.text = "Source: %s" % card.get("source", "NASA")
+		source_label.text = source_val
 		source_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		
 	if source_text and source_text != source_label:
-		source_text.text = "Source: %s" % card.get("source", "NASA")
+		source_text.text = source_val
 		source_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		
 	if progress_bar:

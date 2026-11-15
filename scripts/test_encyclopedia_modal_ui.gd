@@ -67,7 +67,7 @@ func _init() -> void:
 	# Bottom Area
 	var source_label: Label = modal.get_node_or_null("%SourceLabel")
 	assert(source_label != null, "SourceLabel missing")
-	assert("NASA" in source_label.text or "DONKI" in source_label.text, "SourceLabel mismatch: %s" % source_label.text)
+	assert("Based on real space data" in source_label.text, "SourceLabel mismatch: %s" % source_label.text)
 	print("✓ Bottom Source Label verified: '%s'" % source_label.text)
 
 	# 3. NAVIGATION BUTTONS BELOW CARD

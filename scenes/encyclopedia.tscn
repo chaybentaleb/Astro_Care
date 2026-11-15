@@ -394,10 +394,10 @@ theme_override_constants/margin_bottom = 6
 [node name="SourceText" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/SourceMargin/SourcePanel/SourceMargin2"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.3, 0.85, 1, 1)
+theme_override_colors/font_color = Color(0.498039, 0.65098, 0.788235, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 12
-text = "DATA SOURCE: NASA DONKI (FLR 2026-11-07T18:21:00-FLR-001)"
+theme_override_font_sizes/font_size = 14
+text = "Source: Based on real space data"
 autowrap_mode = 3
 
 [node name="NavHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox"]
