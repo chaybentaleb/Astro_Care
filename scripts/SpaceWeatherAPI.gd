@@ -109,29 +109,26 @@ func _on_request_completed(result: int, response_code: int, _headers: PackedStri
 
 ## Parses raw DONKI notification array and extracts structured parameters
 func parse_donki_notifications(notifications: Array) -> Dictionary:
-	var result = {
-		"solar_flare": {
-			"class_type": "",
-			"activity_id": "",
-			"begin_time": "",
-			"peak_time": ""
-		},
-		"cme": {
-			"speed": 0,
-			"activity_id": "",
-			"start_time": "",
-			"target_locations": []
-		},
-		"geomagnetic_storm": {
-			"kp_index": 0.0,
-			"severity": "",
-			"start_time": ""
-		},
-		"rbe": {
-			"message_id": "",
-			"issue_time": ""
-		},
-		"raw_notifications_count": notifications.size()
+	var flare_dict: Dictionary = {
+		"class_type": "",
+		"activity_id": "",
+		"begin_time": "",
+		"peak_time": ""
+	}
+	var cme_dict: Dictionary = {
+		"speed": 0,
+		"activity_id": "",
+		"start_time": "",
+		"target_locations": []
+	}
+	var storm_dict: Dictionary = {
+		"kp_index": 0.0,
+		"severity": "",
+		"start_time": ""
+	}
+	var rbe_dict: Dictionary = {
+		"message_id": "",
+		"issue_time": ""
 	}
 	
 	var cme_speed_regex = RegEx.new()
@@ -156,60 +153,66 @@ func parse_donki_notifications(notifications: Array) -> Dictionary:
 		var msg_id: String = item.get("messageID", "")
 		
 		# Parse CME
-		if (msg_type == "CME" or "CME" in msg_type) and result.cme.speed == 0:
-			result.cme.activity_id = msg_id
-			result.cme.start_time = issue_time
+		if (msg_type == "CME" or "CME" in msg_type) and cme_dict["speed"] == 0:
+			cme_dict["activity_id"] = msg_id
+			cme_dict["start_time"] = issue_time
 			
 			var speed_match = cme_speed_regex.search(msg_body)
 			if speed_match:
-				result.cme.speed = speed_match.get_string(1).to_int()
+				cme_dict["speed"] = speed_match.get_string(1).to_int()
 				
 			var time_match = cme_time_regex.search(msg_body)
 			if time_match:
-				result.cme.start_time = time_match.get_string(1)
+				cme_dict["start_time"] = time_match.get_string(1)
 				
 			var targets: Array = []
 			if "Mars" in msg_body: targets.append("Mars")
 			if "STEREO A" in msg_body: targets.append("STEREO A")
 			if "Psyche" in msg_body: targets.append("Psyche")
 			if "Earth" in msg_body: targets.append("Earth")
-			result.cme.target_locations = targets
+			cme_dict["target_locations"] = targets
 			
 		# Parse Solar Flare
-		elif (msg_type == "FLR" or "flare" in msg_body.to_lower()) and result.solar_flare.class_type.is_empty():
-			result.solar_flare.activity_id = msg_id
-			result.solar_flare.begin_time = issue_time
+		elif (msg_type == "FLR" or "flare" in msg_body.to_lower()) and (flare_dict["class_type"] as String).is_empty():
+			flare_dict["activity_id"] = msg_id
+			flare_dict["begin_time"] = issue_time
 			
 			var flare_match = flare_regex.search(msg_body)
 			if flare_match:
-				result.solar_flare.class_type = flare_match.get_string(1).to_upper()
+				flare_dict["class_type"] = flare_match.get_string(1).to_upper()
 				
 		# Parse Geomagnetic Storm
-		elif (msg_type == "GST" or "geomagnetic" in msg_body.to_lower()) and result.geomagnetic_storm.kp_index == 0.0:
-			result.geomagnetic_storm.start_time = issue_time
+		elif (msg_type == "GST" or "geomagnetic" in msg_body.to_lower()) and storm_dict["kp_index"] == 0.0:
+			storm_dict["start_time"] = issue_time
 			var kp_match = kp_regex.search(msg_body)
 			if kp_match:
-				result.geomagnetic_storm.kp_index = kp_match.get_string(1).to_float()
+				storm_dict["kp_index"] = kp_match.get_string(1).to_float()
 			else:
-				result.geomagnetic_storm.kp_index = 5.0
-			result.geomagnetic_storm.severity = "G3 - Strong" if result.geomagnetic_storm.kp_index >= 6.0 else "G1 - Minor"
+				storm_dict["kp_index"] = 5.0
+			storm_dict["severity"] = "G3 - Strong" if storm_dict["kp_index"] >= 6.0 else "G1 - Minor"
 			
 		# Parse Radiation Belt Enhancement
-		elif msg_type == "RBE" and result.rbe.message_id.is_empty():
-			result.rbe.message_id = msg_id
-			result.rbe.issue_time = issue_time
+		elif msg_type == "RBE" and (rbe_dict["message_id"] as String).is_empty():
+			rbe_dict["message_id"] = msg_id
+			rbe_dict["issue_time"] = issue_time
 
 	# Realistic baseline values if notification body was summarized without full metadata
-	if result.cme.speed == 0 and result.raw_notifications_count > 0:
-		result.cme.speed = 726 # Default confirmed NASA DONKI speed from latest event
-		result.cme.target_locations = ["Mars", "STEREO A"]
-	if result.solar_flare.class_type.is_empty() and result.raw_notifications_count > 0:
-		result.solar_flare.class_type = "M1.9"
-	if result.geomagnetic_storm.kp_index == 0.0 and result.raw_notifications_count > 0:
-		result.geomagnetic_storm.kp_index = 6.0
-		result.geomagnetic_storm.severity = "G4 - Severe"
+	if cme_dict["speed"] == 0 and notifications.size() > 0:
+		cme_dict["speed"] = 726 # Confirmed NASA DONKI speed
+		cme_dict["target_locations"] = ["Mars", "STEREO A"]
+	if (flare_dict["class_type"] as String).is_empty() and notifications.size() > 0:
+		flare_dict["class_type"] = "M1.9"
+	if storm_dict["kp_index"] == 0.0 and notifications.size() > 0:
+		storm_dict["kp_index"] = 6.0
+		storm_dict["severity"] = "G4 - Severe"
 
-	return result
+	return {
+		"solar_flare": flare_dict,
+		"cme": cme_dict,
+		"geomagnetic_storm": storm_dict,
+		"rbe": rbe_dict,
+		"raw_notifications_count": notifications.size()
+	}
 
 ## Applies parsed live telemetry and injects into game events and encyclopedia
 func apply_live_data(parsed: Dictionary) -> void:
@@ -221,9 +224,9 @@ func apply_live_data(parsed: Dictionary) -> void:
 	
 	print("[SpaceWeatherAPI] Successfully loaded real-time NASA space weather data!")
 	print("[SpaceWeatherAPI] Live Telemetry: Solar Flare=%s | CME Speed=%d km/s | Storm Kp=%.1f" % [
-		live_parameters.solar_flare.class_type,
-		live_parameters.cme.speed,
-		live_parameters.geomagnetic_storm.kp_index
+		live_parameters["solar_flare"]["class_type"],
+		live_parameters["cme"]["speed"],
+		live_parameters["geomagnetic_storm"]["kp_index"]
 	])
 	
 	inject_into_encyclopedia()
@@ -241,25 +244,31 @@ func inject_into_donki_events(events: Array[Dictionary]) -> Array[Dictionary]:
 		
 		match id:
 			1: # Small Solar Flare
-				if not live_parameters.solar_flare.class_type.is_empty():
-					ev_copy["donki_code"] = "DONKI LIVE: FLR-%s (Solar Flare)" % live_parameters.solar_flare.class_type
-					ev_copy["scenario"] = "REAL-TIME TELEMETRY: Class %s solar flare registered by NASA orbital sensors. Radio ionization wavefront is sweeping forward arrays." % live_parameters.solar_flare.class_type
+				var flare_class: String = live_parameters["solar_flare"].get("class_type", "")
+				if not flare_class.is_empty():
+					ev_copy["donki_code"] = "DONKI LIVE: FLR-%s (Solar Flare)" % flare_class
+					ev_copy["scenario"] = "REAL-TIME TELEMETRY: Class %s solar flare registered by NASA orbital sensors. Radio ionization wavefront is sweeping forward arrays." % flare_class
 			2: # Major Solar Flare
-				if not live_parameters.solar_flare.class_type.is_empty():
-					ev_copy["donki_code"] = "DONKI LIVE CRITICAL: FLR-%s (Solar Storm)" % live_parameters.solar_flare.class_type
-					ev_copy["scenario"] = "REAL-TIME WARNING: Intense %s solar flare detected. Live proton stream reaching spacecraft telemetry." % live_parameters.solar_flare.class_type
+				var flare_class: String = live_parameters["solar_flare"].get("class_type", "")
+				if not flare_class.is_empty():
+					ev_copy["donki_code"] = "DONKI LIVE CRITICAL: FLR-%s (Solar Storm)" % flare_class
+					ev_copy["scenario"] = "REAL-TIME WARNING: Intense %s solar flare detected. Live proton stream reaching spacecraft telemetry." % flare_class
 			3: # CME
-				if live_parameters.cme.speed > 0:
-					ev_copy["donki_code"] = "DONKI LIVE: CME (%d km/s)" % live_parameters.cme.speed
-					var targets_str = ", ".join(live_parameters.cme.target_locations) if not live_parameters.cme.target_locations.is_empty() else "Mars coordinates"
-					ev_copy["scenario"] = "REAL-TIME TELEMETRY: NASA CCMC models confirm CME plasma cloud clocked at %d km/s, tracking towards %s!" % [live_parameters.cme.speed, targets_str]
+				var cme_spd: int = live_parameters["cme"].get("speed", 0)
+				if cme_spd > 0:
+					ev_copy["donki_code"] = "DONKI LIVE: CME (%d km/s)" % cme_spd
+					var targets_arr: Array = live_parameters["cme"].get("target_locations", [])
+					var targets_str = ", ".join(targets_arr) if not targets_arr.is_empty() else "Mars coordinates"
+					ev_copy["scenario"] = "REAL-TIME TELEMETRY: NASA CCMC models confirm CME plasma cloud clocked at %d km/s, tracking towards %s!" % [cme_spd, targets_str]
 			4: # Geomagnetic Storm
-				if live_parameters.geomagnetic_storm.kp_index > 0:
-					ev_copy["donki_code"] = "DONKI LIVE: GST (Kp %.1f)" % live_parameters.geomagnetic_storm.kp_index
-					ev_copy["scenario"] = "REAL-TIME TELEMETRY: Active geomagnetic storm with planetary Kp index %.1f. High induction risk on exterior electrical circuits." % live_parameters.geomagnetic_storm.kp_index
+				var storm_kp: float = live_parameters["geomagnetic_storm"].get("kp_index", 0.0)
+				if storm_kp > 0:
+					ev_copy["donki_code"] = "DONKI LIVE: GST (Kp %.1f)" % storm_kp
+					ev_copy["scenario"] = "REAL-TIME TELEMETRY: Active geomagnetic storm with planetary Kp index %.1f. High induction risk on exterior electrical circuits." % storm_kp
 			8: # Radiation Belt Enhancement
-				if not live_parameters.rbe.message_id.is_empty():
-					ev_copy["donki_code"] = "DONKI LIVE: RBE (%s)" % live_parameters.rbe.message_id
+				var rbe_id: String = live_parameters["rbe"].get("message_id", "")
+				if not rbe_id.is_empty():
+					ev_copy["donki_code"] = "DONKI LIVE: RBE (%s)" % rbe_id
 					ev_copy["scenario"] = "REAL-TIME TELEMETRY: NASA Radiation Belt Enhancement alert active. Relativistic electron flux elevated."
 					
 		updated_events.append(ev_copy)
@@ -273,12 +282,31 @@ func inject_into_encyclopedia() -> void:
 		
 	var enc_class = load("res://scripts/EncyclopediaData.gd")
 	if enc_class and "CARDS_DATA" in enc_class:
-		for card in enc_class.CARDS_DATA:
-			var card_id = card.get("id", "")
-			if card_id == "cme_20261109" and live_parameters.cme.speed > 0:
-				card["fact"] = "Real-time NASA DONKI telemetry clocked this coronal mass ejection at %d km/s, with computer models calculating trajectory towards Mars." % live_parameters.cme.speed
-			elif card_id == "flr_20261107" and not live_parameters.solar_flare.class_type.is_empty():
-				card["fact"] = "Real-time space weather monitors registered an active %s-class solar flare with high energetic proton emission." % live_parameters.solar_flare.class_type
+		var cards_arr: Array = enc_class.CARDS_DATA
+		for i in range(cards_arr.size()):
+			var card = cards_arr[i]
+			if not (card is Dictionary):
+				continue
+			var card_id: String = card.get("id", "")
+			var cme_spd: int = live_parameters["cme"].get("speed", 0)
+			var flare_cls: String = live_parameters["solar_flare"].get("class_type", "")
+			
+			if card_id == "cme_20261109" and cme_spd > 0:
+				var new_fact: String = "Real-time NASA DONKI telemetry clocked this coronal mass ejection at %d km/s, with computer models calculating trajectory towards Mars." % cme_spd
+				if card.is_read_only():
+					var mod_card: Dictionary = card.duplicate()
+					mod_card["fact"] = new_fact
+					cards_arr[i] = mod_card
+				else:
+					card["fact"] = new_fact
+			elif card_id == "flr_20261107" and not flare_cls.is_empty():
+				var new_fact: String = "Real-time space weather monitors registered an active %s-class solar flare with high energetic proton emission." % flare_cls
+				if card.is_read_only():
+					var mod_card: Dictionary = card.duplicate()
+					mod_card["fact"] = new_fact
+					cards_arr[i] = mod_card
+				else:
+					card["fact"] = new_fact
 
 ## Activates offline fallback mode safely
 func activate_fallback(reason: String) -> void:

@@ -4,7 +4,7 @@ extends RefCounted
 ## Encyclopedia Scientific Fact Cards Data for Astro-Care
 ## Contains 19 scientifically verified fact cards from NASA DONKI, NASA OSDR, and NASA Planetary science.
 
-const CARDS_DATA: Array[Dictionary] = [
+static var CARDS_DATA: Array[Dictionary] = [
 	# --- Solar Flares (☀️ SOLAR FLARES) ---
 	{
 		"id": "flr_20261107",

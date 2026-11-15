@@ -78,16 +78,16 @@ func _init() -> void:
 	]
 
 	var parsed = api.parse_donki_notifications(sample_donki_notifications)
-	assert(parsed.cme.speed == 726, "CME speed must parse to 726 km/s, got %d" % parsed.cme.speed)
-	assert("Mars" in parsed.cme.target_locations, "CME targets must include Mars")
-	assert(parsed.solar_flare.class_type == "M1.9", "Flare class must parse to M1.9, got %s" % parsed.solar_flare.class_type)
-	assert(parsed.geomagnetic_storm.kp_index == 6.0, "Storm Kp must parse to 6.0, got %f" % parsed.geomagnetic_storm.kp_index)
-	assert(parsed.rbe.message_id == "20261108-AL-001", "RBE message ID mismatch")
+	assert(parsed["cme"]["speed"] == 726, "CME speed must parse to 726 km/s, got %d" % parsed["cme"]["speed"])
+	assert("Mars" in parsed["cme"]["target_locations"], "CME targets must include Mars")
+	assert(parsed["solar_flare"]["class_type"] == "M1.9", "Flare class must parse to M1.9, got %s" % parsed["solar_flare"]["class_type"])
+	assert(parsed["geomagnetic_storm"]["kp_index"] == 6.0, "Storm Kp must parse to 6.0, got %f" % parsed["geomagnetic_storm"]["kp_index"])
+	assert(parsed["rbe"]["message_id"] == "20261108-AL-001", "RBE message ID mismatch")
 	print("✓ Real-time parameters extracted: Flare=%s, CME Speed=%d km/s, Storm Kp=%.1f, Targets=%s" % [
-		parsed.solar_flare.class_type,
-		parsed.cme.speed,
-		parsed.geomagnetic_storm.kp_index,
-		str(parsed.cme.target_locations)
+		parsed["solar_flare"]["class_type"],
+		parsed["cme"]["speed"],
+		parsed["geomagnetic_storm"]["kp_index"],
+		str(parsed["cme"]["target_locations"])
 	])
 
 	# 4. TEST DYNAMIC INJECTION INTO GAME EVENTS
