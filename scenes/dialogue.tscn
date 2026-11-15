@@ -155,6 +155,60 @@ corner_radius_bottom_left = 6
 shadow_color = Color(0.2, 1, 0.6, 0.35)
 shadow_size = 18
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_telemetry"]
+bg_color = Color(0.02, 0.07, 0.13, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.75, 0.9, 0.5)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0.7, 0.9, 0.2)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_enter"]
+bg_color = Color(0.03, 0.1, 0.18, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.85, 1, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0.85, 1, 0.45)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_enter_hover"]
+bg_color = Color(0.08, 0.22, 0.38, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 1, 0.95, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.2, 1, 0.95, 0.65)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_enter_pressed"]
+bg_color = Color(0.02, 0.07, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 1, 0.95, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="DialogueLayer" type="CanvasLayer"]
 layer = 10
 script = ExtResource("4_diag")
@@ -694,3 +748,127 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_center")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_center_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_center_pressed")
 text = "UNDERSTOOD, COMMANDER ▶"
+
+[node name="TitleScreen" type="Control" parent="IntroControl"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Backdrop" type="ColorRect" parent="IntroControl/TitleScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.035, 0.07, 0.88)
+
+[node name="TitleVBox" type="VBoxContainer" parent="IntroControl/TitleScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -240.0
+offset_right = 460.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="EmblemLabel" type="Label" parent="IntroControl/TitleScreen/TitleVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 0.95)
+theme_override_colors/font_shadow_color = Color(0, 0.8, 1, 0.45)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_outline_size = 14
+theme_override_fonts/font = ExtResource("3_fyky8")
+theme_override_font_sizes/font_size = 18
+text = "✦ ARES-4 ✦"
+horizontal_alignment = 1
+
+[node name="MainTitleLabel" type="Label" parent="IntroControl/TitleScreen/TitleVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0, 0.92, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.85, 1, 0.6)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_outline_size = 28
+theme_override_fonts/font = ExtResource("3_fyky8")
+theme_override_font_sizes/font_size = 62
+text = "ASTRO_CARE"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="IntroControl/TitleScreen/TitleVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.7, 0.88, 1, 0.92)
+theme_override_fonts/font = ExtResource("3_fyky8")
+theme_override_font_sizes/font_size = 16
+text = "MARS SURVIVAL & SPACE WEATHER COMMAND"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="IntroControl/TitleScreen/TitleVBox"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TelemetryPanel" type="PanelContainer" parent="IntroControl/TitleScreen/TitleVBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_telemetry")
+
+[node name="TelemetryMargin" type="MarginContainer" parent="IntroControl/TitleScreen/TitleVBox/TelemetryPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 10
+
+[node name="TelemetryLabel" type="Label" parent="IntroControl/TitleScreen/TitleVBox/TelemetryPanel/TelemetryMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.3, 0.95, 0.75, 1)
+theme_override_fonts/font = ExtResource("3_fyky8")
+theme_override_font_sizes/font_size = 13
+text = "● LIVE TELEMETRY | Based on real space data (NASA & CSA) • Auto-updated via live API"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="IntroControl/TitleScreen/TitleVBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="BtnEnterStation" type="Button" parent="IntroControl/TitleScreen/TitleVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 0
+theme_override_colors/font_color = Color(0.05, 0.98, 0.88, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_fyky8")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_enter")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_enter_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_enter_pressed")
+text = "ENTER ARES-4 STATION ▶"
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+volume_db = -10.0

@@ -32,6 +32,11 @@ signal intro_finished
 @onready var crew_speech_bubble: PanelContainer = %CrewSpeechBubble if has_node("%CrewSpeechBubble") else null
 @onready var crew_speech_text: Label = %CrewSpeechText if has_node("%CrewSpeechText") else null
 
+# Title Screen Overlay & Music Player
+@onready var title_screen: Control = %TitleScreen if has_node("%TitleScreen") else null
+@onready var btn_enter_station: Button = %BtnEnterStation if has_node("%BtnEnterStation") else null
+@onready var music_player: AudioStreamPlayer = %MusicPlayer if has_node("%MusicPlayer") else null
+
 var encyclopedia_scene = preload("res://scenes/EncyclopediaModal.tscn")
 var encyclopedia_instance: EncyclopediaModal = null
 
@@ -43,13 +48,15 @@ var is_advancing: bool = false
 var is_typewriting: bool = false
 var typewriter_tween: Tween = null
 var current_target_text: String = ""
-var current_phase: String = "intro"  # "intro", "crew_teaser", "menu"
+var current_phase: String = "title"  # "title", "intro", "crew_teaser", "menu"
 
 # Audio
 var audio_typewriter: AudioStreamPlayer = null
 var audio_click: AudioStreamPlayer = null
 var sfx_astrobot_speak: AudioStream = null
 var sfx_click: AudioStream = null
+var sfx_music_space: AudioStream = null
+var music_fade_tween: Tween = null
 
 # ─── Storytelling Steps ──────────────────────────────────────────────
 const INTRO_STEPS: Array[Dictionary] = [
@@ -92,7 +99,7 @@ func _ready() -> void:
 	_load_audio()
 	dialogue_index = 0
 	is_advancing = false
-	current_phase = "intro"
+	current_phase = "title"
 
 	if intro_control:
 		intro_control.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -101,6 +108,7 @@ func _ready() -> void:
 
 	if dialogue_anchor:
 		dialogue_anchor.mouse_filter = Control.MOUSE_FILTER_PASS
+		dialogue_anchor.visible = false
 		if not dialogue_anchor.gui_input.is_connected(_on_gui_input):
 			dialogue_anchor.gui_input.connect(_on_gui_input)
 
@@ -114,8 +122,17 @@ func _ready() -> void:
 	if crew_speech_bubble:
 		crew_speech_bubble.visible = false
 		crew_speech_bubble.modulate.a = 0.0
+	if click_hint:
+		click_hint.visible = false
 
-	# Connect action buttons
+	# Initial Title Screen State
+	if title_screen:
+		title_screen.visible = true
+		title_screen.modulate.a = 1.0
+
+	# Connect action and title buttons
+	if btn_enter_station and not btn_enter_station.pressed.is_connected(_on_enter_station_pressed):
+		btn_enter_station.pressed.connect(_on_enter_station_pressed)
 	if btn_start_mission and not btn_start_mission.pressed.is_connected(_on_start_mission_pressed):
 		btn_start_mission.pressed.connect(_on_start_mission_pressed)
 	if btn_how_to_play and not btn_how_to_play.pressed.is_connected(_on_how_to_play_pressed):
@@ -135,8 +152,8 @@ func _ready() -> void:
 		encyclopedia_instance.visible = false
 		add_child(encyclopedia_instance)
 
-	# Start first intro step with typewriter
-	_show_intro_step(0)
+	# Start background music on initial Title Screen
+	_play_music_fade_in(-10.0, 1.2)
 
 func _load_audio() -> void:
 	# Create AudioStreamPlayers
@@ -150,6 +167,28 @@ func _load_audio() -> void:
 	audio_click.volume_db = -4.0
 	add_child(audio_click)
 
+	# Background Music Player
+	if music_player == null:
+		music_player = get_node_or_null("%MusicPlayer")
+	if music_player == null:
+		music_player = AudioStreamPlayer.new()
+		music_player.name = "MusicPlayer"
+		music_player.bus = "Master"
+		music_player.volume_db = -10.0
+		add_child(music_player)
+
+	if not music_player.finished.is_connected(_on_music_finished):
+		music_player.finished.connect(_on_music_finished)
+
+	# Load music asset
+	if ResourceLoader.exists("res://assets/audio/music/music_space.mp3.mp3"):
+		sfx_music_space = load("res://assets/audio/music/music_space.mp3.mp3")
+	elif ResourceLoader.exists("res://assets/audio/music/music_space.mp3"):
+		sfx_music_space = load("res://assets/audio/music/music_space.mp3")
+
+	if sfx_music_space and sfx_music_space is AudioStreamMP3:
+		(sfx_music_space as AudioStreamMP3).loop = true
+
 	# Load typing sound
 	if ResourceLoader.exists("res://assets/audios/astrobot_speak.wav"):
 		sfx_astrobot_speak = load("res://assets/audios/astrobot_speak.wav")
@@ -162,7 +201,57 @@ func _load_audio() -> void:
 	elif ResourceLoader.exists("res://assets/audio/sound effects/pop up bot.mp3"):
 		sfx_click = load("res://assets/audio/sound effects/pop up bot.mp3")
 
+func _on_music_finished() -> void:
+	if current_phase in ["title", "menu"] and music_player and sfx_music_space:
+		music_player.play()
+
+func _play_music_fade_in(target_db: float = -10.0, duration: float = 1.2) -> void:
+	if not music_player or not sfx_music_space:
+		return
+	if music_fade_tween:
+		music_fade_tween.kill()
+	music_player.stream = sfx_music_space
+	music_player.volume_db = -60.0
+	music_player.play()
+	music_fade_tween = create_tween()
+	music_fade_tween.tween_property(music_player, "volume_db", target_db, duration)
+
+func _fade_out_music(duration: float = 0.6) -> void:
+	if not music_player or not music_player.playing:
+		return
+	if music_fade_tween:
+		music_fade_tween.kill()
+	music_fade_tween = create_tween()
+	music_fade_tween.tween_property(music_player, "volume_db", -60.0, duration)
+	music_fade_tween.tween_callback(func():
+		if music_player:
+			music_player.stop()
+	)
+
+func _on_enter_station_pressed() -> void:
+	if current_phase != "title":
+		return
+	_play_click_sound()
+
+	# Smoothly fade out music so typewriter effects are crystal clear
+	_fade_out_music(0.6)
+
+	# Smoothly fade out and hide Title Overlay
+	if title_screen:
+		var fade = create_tween()
+		fade.tween_property(title_screen, "modulate:a", 0.0, 0.35)
+		await fade.finished
+		title_screen.visible = false
+
+	# Transition to intro storytelling step 0
+	current_phase = "intro"
+	dialogue_index = 0
+	_show_intro_step(0)
+
 func _ensure_nodes() -> void:
+	if title_screen == null: title_screen = get_node_or_null("%TitleScreen")
+	if btn_enter_station == null: btn_enter_station = get_node_or_null("%BtnEnterStation")
+	if music_player == null: music_player = get_node_or_null("%MusicPlayer")
 	if dialogue_text == null: dialogue_text = get_node_or_null("%DialogueText")
 	if click_hint == null: click_hint = get_node_or_null("%ClickHint")
 	if header_label == null: header_label = get_node_or_null("%HeaderLabel")
@@ -196,7 +285,9 @@ func _show_intro_step(index: int) -> void:
 
 	var step = INTRO_STEPS[index]
 
-	# Show dialogue anchor, hide crew section
+	# Show dialogue anchor, hide crew section and title screen
+	if title_screen:
+		title_screen.visible = false
 	if dialogue_anchor:
 		dialogue_anchor.visible = true
 	if crew_section:
@@ -281,6 +372,9 @@ func _transition_to_menu() -> void:
 		bubble_out.tween_property(crew_speech_bubble, "modulate:a", 0.0, 0.2)
 		await bubble_out.finished
 		crew_speech_bubble.visible = false
+
+	# Smoothly fade the background music back in
+	_play_music_fade_in(-10.0, 1.2)
 
 	# Show action buttons with smooth fade-in below crew
 	if action_buttons_center:
@@ -390,8 +484,8 @@ func _input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 		return
 
-	# In menu phase, let buttons handle their own clicks — don't intercept
-	if current_phase == "menu":
+	# In title or menu phase, let dedicated buttons handle clicks — don't intercept
+	if current_phase == "title" or current_phase == "menu":
 		return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -406,7 +500,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if how_to_play_modal and how_to_play_modal.visible:
 		return
-	if current_phase == "menu":
+	if current_phase == "title" or current_phase == "menu":
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
@@ -420,7 +514,7 @@ func _on_gui_input(event: InputEvent) -> void:
 		return
 	if how_to_play_modal and how_to_play_modal.visible:
 		return
-	if current_phase == "menu":
+	if current_phase == "title" or current_phase == "menu":
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
@@ -496,6 +590,9 @@ func _handle_crew_teaser_advance() -> void:
 
 func _on_start_mission_pressed() -> void:
 	_play_click_sound()
+	_fade_out_music(0.3)
+	if music_fade_tween and music_fade_tween.is_valid():
+		await music_fade_tween.finished
 	intro_finished.emit()
 
 func _on_how_to_play_pressed() -> void:
