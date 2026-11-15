@@ -153,5 +153,6 @@ godot --headless --path . -s res://scripts/test_mars_stem_events.gd
 
 ## 📜 License & Acknowledgments
 
-* Developed with **Godot Engine**.
-* Educational scenarios inspired by open scientific datasets from **NASA DONKI**, **NASA OSDR**, **NASA RadLab**, and the **Canadian Space Agency (CSA)**.
+- Developed with **Godot Engine 4** by **Team Lyra V** — all game mechanics, narrative design, balancing, and pixel-art integration were hand-crafted by our team.
+- Educational scenarios inspired by open scientific datasets from **NASA DONKI**, **NASA OSDR**, **NASA RadLab**, **NASA Mars Trek**, and the **Canadian Space Agency (CSA)**.
+- Engineering workflow accelerated using **Super Intelligence (SI)** tools (**Claude Code**) to optimize GDScript modularity and polish technical execution.
