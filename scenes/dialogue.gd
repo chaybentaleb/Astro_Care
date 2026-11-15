@@ -313,6 +313,11 @@ func _show_crew_speech_step(index: int) -> void:
 	# Start typewriter for this step's text
 	_start_typewriter(step["text"], crew_speech_text)
 
+	# Show click hint below
+	if click_hint:
+		click_hint.text = "▶ Click anywhere to continue..."
+		click_hint.visible = true
+
 # ─── Typewriter Engine ───────────────────────────────────────────────
 
 func _start_typewriter(target_text: String, label: Label) -> void:
@@ -439,12 +444,12 @@ func _handle_intro_advance() -> void:
 		if is_inside_tree():
 			var tree = get_tree()
 			if tree:
-				await tree.create_timer(0.2).timeout
+				await tree.create_timer(0.25).timeout
 		is_advancing = false
 	else:
 		# Last intro step done — transition to crew teaser
 		is_advancing = true
-		_transition_to_crew_teaser()
+		await _transition_to_crew_teaser()
 		is_advancing = false
 
 func _handle_crew_teaser_advance() -> void:
@@ -461,12 +466,16 @@ func _handle_crew_teaser_advance() -> void:
 		if is_inside_tree():
 			var tree = get_tree()
 			if tree:
-				await tree.create_timer(0.2).timeout
+				await tree.create_timer(0.25).timeout
 		is_advancing = false
 	else:
 		# All crew dialogue done — show menu buttons
 		is_advancing = true
 		_transition_to_menu()
+		if is_inside_tree():
+			var tree = get_tree()
+			if tree:
+				await tree.create_timer(0.5).timeout
 		is_advancing = false
 
 # ─── Button Handlers ─────────────────────────────────────────────────
