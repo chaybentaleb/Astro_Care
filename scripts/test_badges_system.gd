@@ -90,7 +90,7 @@ func _init() -> void:
 	# 6. Verify Dialogue Integration
 	var diag_scene = load("res://scenes/dialogue.tscn")
 	assert(diag_scene != null, "Failed to load scenes/dialogue.tscn")
-	var diag: IntroDialogue = diag_scene.instantiate()
+	var diag = diag_scene.instantiate()
 	root.add_child(diag)
 	diag._ensure_nodes()
 

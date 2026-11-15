@@ -70,7 +70,7 @@ extends CanvasLayer
 @onready var btn_restart_victory: Button = %BtnRestartVictory
 
 # Mode Selectors removed - Events progress naturally in ALL mode
-var encyclopedia_scene = preload("res://scenes/encyclopedia.tscn")
+var encyclopedia_scene = preload("res://scenes/EncyclopediaModal.tscn")
 var encyclopedia_instance: EncyclopediaModal = null
 
 var badges_scene = preload("res://scenes/badges.tscn")
@@ -383,7 +383,10 @@ func _on_restart_pressed() -> void:
 func _on_encyclopedia_pressed() -> void:
 	if encyclopedia_instance == null or not is_instance_valid(encyclopedia_instance):
 		encyclopedia_instance = encyclopedia_scene.instantiate()
+		encyclopedia_instance.visible = false
 		add_child(encyclopedia_instance)
+	encyclopedia_instance.current_index = 0
+	encyclopedia_instance._display_card_data(0)
 	encyclopedia_instance.open()
 
 func _on_badges_pressed() -> void:

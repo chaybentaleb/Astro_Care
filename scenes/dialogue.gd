@@ -1,4 +1,3 @@
-class_name IntroDialogue
 extends CanvasLayer
 
 signal intro_finished
@@ -24,7 +23,7 @@ signal intro_finished
 @onready var btn_close_how_to_play: Button = %BtnCloseHowToPlay
 @onready var btn_got_it: Button = %BtnGotIt
 
-var encyclopedia_scene = preload("res://scenes/encyclopedia.tscn")
+var encyclopedia_scene = preload("res://scenes/EncyclopediaModal.tscn")
 var encyclopedia_instance: EncyclopediaModal = null
 
 var badges_scene = preload("res://scenes/badges.tscn")
@@ -121,6 +120,12 @@ func _ready() -> void:
 		btn_encyclopedia.pressed.connect(_on_encyclopedia_pressed)
 	if btn_badges and not btn_badges.pressed.is_connected(_on_badges_pressed):
 		btn_badges.pressed.connect(_on_badges_pressed)
+
+	# Instance EncyclopediaModal.tscn (hidden by default) in Intro/Main Menu scene
+	if encyclopedia_instance == null or not is_instance_valid(encyclopedia_instance):
+		encyclopedia_instance = encyclopedia_scene.instantiate()
+		encyclopedia_instance.visible = false
+		add_child(encyclopedia_instance)
 
 	show_dialogue_step(0)
 
@@ -240,7 +245,10 @@ func _on_encyclopedia_pressed() -> void:
 	_ensure_nodes()
 	if encyclopedia_instance == null or not is_instance_valid(encyclopedia_instance):
 		encyclopedia_instance = encyclopedia_scene.instantiate()
+		encyclopedia_instance.visible = false
 		add_child(encyclopedia_instance)
+	encyclopedia_instance.current_index = 0
+	encyclopedia_instance._display_card_data(0)
 	encyclopedia_instance.open()
 
 func _on_badges_pressed() -> void:

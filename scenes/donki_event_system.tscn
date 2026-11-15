@@ -545,7 +545,7 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = SubResource("StyleBoxFlat_hud_item")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "📚 ARCHIVES"
+text = "📚 ENCYCLOPEDIA"
 
 [node name="BtnBadges" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/TopBanner"]
 unique_name_in_owner = true

@@ -7,7 +7,7 @@ func _init() -> void:
 
 	var diag_scene = load("res://scenes/dialogue.tscn")
 	assert(diag_scene != null, "Failed to load scenes/dialogue.tscn")
-	var diag: IntroDialogue = diag_scene.instantiate()
+	var diag = diag_scene.instantiate()
 	root.add_child(diag)
 
 	# Verify mouse_filter settings
