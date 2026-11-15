@@ -27,12 +27,10 @@ extends CanvasLayer
 
 # Event Terminal Elements
 @onready var event_counter: Label = %EventCounter
-@onready var donki_badge: Label = %DonkiBadge
 @onready var event_title: Label = %EventTitle
 @onready var event_scenario: Label = %EventScenario
 
 # Astro-Bot Tactical Advice & Sidebar
-@onready var btn_hint: Button = %BtnHint if has_node("%BtnHint") else null
 @onready var astrobot_sidebar: Control = %AstrobotSidebar if has_node("%AstrobotSidebar") else null
 @onready var btn_astrobot_avatar: TextureButton = %BtnAstrobotAvatar if has_node("%BtnAstrobotAvatar") else null
 @onready var astrobot_nameplate: Label = %AstrobotNameplate if has_node("%AstrobotNameplate") else null
@@ -46,7 +44,6 @@ extends CanvasLayer
 
 # Hint & Encyclopedia inside speech bubble
 @onready var btn_bubble_hint: Button = %BtnBubbleHint if has_node("%BtnBubbleHint") else null
-@onready var btn_bubble_encyclopedia: Button = %BtnBubbleEncyclopedia if has_node("%BtnBubbleEncyclopedia") else null
 @onready var hint_panel: PanelContainer = %HintPanel if has_node("%HintPanel") else null
 @onready var hint_text: Label = %HintText if has_node("%HintText") else null
 @onready var btn_bubble_encyclopedia_link: Button = %BtnBubbleEncyclopediaLink if has_node("%BtnBubbleEncyclopediaLink") else null
@@ -55,10 +52,7 @@ extends CanvasLayer
 @onready var audio_mood_popup: AudioStreamPlayer = %AudioMoodPopup if has_node("%AudioMoodPopup") else null
 @onready var audio_typewriter: AudioStreamPlayer = %AudioTypewriter if has_node("%AudioTypewriter") else null
 
-# Legacy panel references (safely null if removed)
-@onready var bot_advice_panel: PanelContainer = %BotAdvicePanel if has_node("%BotAdvicePanel") else null
-@onready var bot_advice_text: Label = %BotAdviceText if has_node("%BotAdviceText") else null
-@onready var bot_icon: Label = %BotIcon if has_node("%BotIcon") else null
+
 
 # Choice Buttons (A, B, C, D)
 @onready var btn_choice_a: Button = %BtnChoiceA
@@ -171,18 +165,12 @@ func _ready() -> void:
 	btn_restart_game_over.pressed.connect(_on_restart_pressed)
 	btn_restart_victory.pressed.connect(_on_restart_pressed)
 
-	if has_node("%BtnEncyclopedia"):
-		var btn_enc: Button = get_node("%BtnEncyclopedia")
-		if not btn_enc.pressed.is_connected(_on_encyclopedia_pressed):
-			btn_enc.pressed.connect(_on_encyclopedia_pressed)
 
 	if has_node("%BtnBadges"):
 		var btn_b: Button = get_node("%BtnBadges")
 		if not btn_b.pressed.is_connected(_on_badges_pressed):
 			btn_b.pressed.connect(_on_badges_pressed)
 
-	if btn_hint and not btn_hint.pressed.is_connected(_on_hint_pressed):
-		btn_hint.pressed.connect(_on_hint_pressed)
 
 	# Initialize Astrobot assets, idle animation, and click-to-talk
 	_load_astrobot_assets()
@@ -196,9 +184,6 @@ func _ready() -> void:
 
 	if btn_bubble_hint and not btn_bubble_hint.pressed.is_connected(_on_bubble_hint_pressed):
 		btn_bubble_hint.pressed.connect(_on_bubble_hint_pressed)
-
-	if btn_bubble_encyclopedia and not btn_bubble_encyclopedia.pressed.is_connected(_on_bubble_encyclopedia_pressed):
-		btn_bubble_encyclopedia.pressed.connect(_on_bubble_encyclopedia_pressed)
 
 	if btn_bubble_encyclopedia_link and not btn_bubble_encyclopedia_link.pressed.is_connected(_on_bubble_encyclopedia_pressed):
 		btn_bubble_encyclopedia_link.pressed.connect(_on_bubble_encyclopedia_pressed)
@@ -223,39 +208,25 @@ func _on_event_presented(event_data: Dictionary, current_idx: int, total_count: 
 	# Thematic Event Classification
 	if ev_id >= 28:
 		event_counter.text = "MARS BASE SURVIVAL • EVENT %d OF %d" % [current_idx, total_count]
-		event_counter.modulate = Color(1.0, 0.35, 0.2) # Deep Mars Red
-		donki_badge.text = event_data.get("code", "MARS-SURV")
-		donki_badge.modulate = Color(1.0, 0.5, 0.2)
+		event_counter.modulate = Color(1.0, 0.35, 0.2)
 	elif ev_id >= 25:
 		event_counter.text = "CSA STEM SCIENCE QUIZ • EVENT %d OF %d" % [current_idx, total_count]
-		event_counter.modulate = Color(0.9, 0.4, 1.0) # STEM Violet
-		donki_badge.text = event_data.get("code", "STEM-QUIZ")
-		donki_badge.modulate = Color(0.6, 0.9, 1.0)
+		event_counter.modulate = Color(0.9, 0.4, 1.0)
 	elif ev_id == 20:
 		event_counter.text = "MARS TREK EXPEDITION • EVENT %d OF %d" % [current_idx, total_count]
-		event_counter.modulate = Color(1.0, 0.75, 0.2) # Explorer Gold
-		donki_badge.text = event_data.get("code", "MARS-TREK-LOC-20")
-		donki_badge.modulate = Color(1.0, 0.9, 0.3)
+		event_counter.modulate = Color(1.0, 0.75, 0.2)
 	elif ev_id >= 19:
 		event_counter.text = "CSA FOOD & GREENHOUSE • EVENT %d OF %d" % [current_idx, total_count]
-		event_counter.modulate = Color(0.4, 1.0, 0.3) # Flora Green
-		donki_badge.text = event_data.get("csa_code", "CSA GREENHOUSE")
-		donki_badge.modulate = Color(1.0, 0.9, 0.3)
+		event_counter.modulate = Color(0.4, 1.0, 0.3)
 	elif ev_id >= 15:
 		event_counter.text = "NASA RADLAB DOSIMETRY • EVENT %d OF %d" % [current_idx, total_count]
 		event_counter.modulate = Color(1.0, 0.45, 0.25)
-		donki_badge.text = event_data.get("radlab_code", "RADLAB DOSIMETRY")
-		donki_badge.modulate = Color(1.0, 0.8, 0.2)
 	elif ev_id >= 9:
 		event_counter.text = "NASA OSDR ASTRONAUT HEALTH • EVENT %d OF %d" % [current_idx, total_count]
 		event_counter.modulate = Color(0.2, 1.0, 0.6)
-		donki_badge.text = event_data.get("osdr_code", "OSDR BIOMEDICAL")
-		donki_badge.modulate = Color(0.3, 0.9, 1.0)
 	else:
 		event_counter.text = "NASA DONKI SPACE WEATHER • EVENT %d OF %d" % [current_idx, total_count]
 		event_counter.modulate = Color(0, 0.85, 1.0)
-		donki_badge.text = event_data.get("donki_code", "DONKI ALERT")
-		donki_badge.modulate = Color(1.0, 0.6, 0.2)
 		
 	event_title.text = "%d. %s" % [ev_id, event_data.get("title", "Unknown Event")]
 	event_scenario.text = event_data.get("scenario", "")
@@ -447,12 +418,6 @@ func _on_badges_pressed() -> void:
 	var history = game_manager.decision_history if game_manager else []
 	badges_instance.open(stats, history)
 
-func _on_hint_pressed() -> void:
-	var ev_id: int = current_event_data.get("id", 1)
-	var hint_text: String = AstrobotEventsData.get_hint(ev_id)
-	if hint_text.is_empty():
-		hint_text = "Hint: Monitor energy, oxygen, and radiation closely!"
-	_display_speech_bubble(hint_text)
 
 func _load_astrobot_assets() -> void:
 	# Textures (load clean dedicated files or fallback to existing assets)
