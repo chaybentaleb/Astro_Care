@@ -75,7 +75,17 @@ const INTRO_STEPS: Array[Dictionary] = [
 	},
 ]
 
-const CREW_TEASER_TEXT: String = "Are you ready to face the red storms, Commander? Let's secure the habitat!"
+const CREW_TEASER_STEPS: Array[Dictionary] = [
+	{
+		"speaker": "CREW MEMBER 1",
+		"text": "Commander, solar sensors are redlining! Are you ready to face the Martian storms?"
+	},
+	{
+		"speaker": "CREW MEMBER 2",
+		"text": "Let's secure the habitat and keep everyone alive. We're counting on you!"
+	},
+]
+var crew_dialogue_index: int = 0
 
 func _ready() -> void:
 	_ensure_nodes()
@@ -217,6 +227,7 @@ func _show_intro_step(index: int) -> void:
 
 func _transition_to_crew_teaser() -> void:
 	current_phase = "crew_teaser"
+	crew_dialogue_index = 0
 
 	# Fade out the dialogue anchor
 	if dialogue_anchor:
@@ -224,6 +235,10 @@ func _transition_to_crew_teaser() -> void:
 		fade_out.tween_property(dialogue_anchor, "modulate:a", 0.0, 0.3)
 		await fade_out.finished
 		dialogue_anchor.visible = false
+
+	# Hide buttons during crew dialogue
+	if action_buttons_center:
+		action_buttons_center.visible = false
 
 	# Show crew section with avatars popping in
 	if crew_section:
@@ -240,7 +255,7 @@ func _transition_to_crew_teaser() -> void:
 			avatar.modulate.a = 0.0
 			avatar.scale = Vector2(0.5, 0.5)
 			avatar.pivot_offset = avatar.size / 2.0
-	
+
 	for i in range(avatars.size()):
 		var avatar = avatars[i]
 		if avatar:
@@ -248,28 +263,19 @@ func _transition_to_crew_teaser() -> void:
 			pop.tween_property(avatar, "modulate:a", 1.0, 0.2)
 			pop.tween_property(avatar, "scale", Vector2(1.0, 1.0), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 			await pop.finished
-			# Small delay between each pop
 			if i < avatars.size() - 1:
 				await get_tree().create_timer(0.12).timeout
 
-	# Show crew speech bubble with typewriter
-	if crew_speech_bubble:
-		crew_speech_bubble.visible = true
-		crew_speech_bubble.modulate.a = 0.0
-		var bubble_fade = create_tween()
-		bubble_fade.tween_property(crew_speech_bubble, "modulate:a", 1.0, 0.25)
-		await bubble_fade.finished
-
-	_start_typewriter(CREW_TEASER_TEXT, crew_speech_text)
+	# Show first crew speech step
+	_show_crew_speech_step(0)
 
 func _transition_to_menu() -> void:
 	current_phase = "menu"
 
-	# Update click hint to indicate menu is ready
 	if click_hint:
 		click_hint.visible = false
 
-	# Show action buttons with smooth fade-in
+	# Show action buttons with smooth fade-in below crew
 	if action_buttons_center:
 		action_buttons_center.visible = true
 		action_buttons_center.modulate.a = 0.0
@@ -278,6 +284,34 @@ func _transition_to_menu() -> void:
 		var tween = create_tween().set_parallel(true)
 		tween.tween_property(action_buttons_center, "modulate:a", 1.0, 0.35)
 		tween.tween_property(action_buttons_center, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _show_crew_speech_step(index: int) -> void:
+	crew_dialogue_index = index
+	if index < 0 or index >= CREW_TEASER_STEPS.size():
+		return
+
+	var step = CREW_TEASER_STEPS[index]
+
+	# Show/fade in the speech bubble
+	if crew_speech_bubble:
+		crew_speech_bubble.visible = true
+		if crew_speech_bubble.modulate.a < 0.9:
+			crew_speech_bubble.modulate.a = 0.0
+			var bubble_fade = create_tween()
+			bubble_fade.tween_property(crew_speech_bubble, "modulate:a", 1.0, 0.25)
+
+	# Highlight the speaking crew member avatar
+	var avatars = [crew_avatar_1, crew_avatar_2, crew_avatar_3, crew_avatar_4]
+	for i in range(avatars.size()):
+		if avatars[i]:
+			if i == index:
+				# Bounce the active speaker
+				var bounce = create_tween()
+				bounce.tween_property(avatars[i], "scale", Vector2(1.08, 1.08), 0.12).set_trans(Tween.TRANS_BACK)
+				bounce.tween_property(avatars[i], "scale", Vector2(1.0, 1.0), 0.1)
+
+	# Start typewriter for this step's text
+	_start_typewriter(step["text"], crew_speech_text)
 
 # ─── Typewriter Engine ───────────────────────────────────────────────
 
@@ -419,10 +453,21 @@ func _handle_crew_teaser_advance() -> void:
 		_finish_typewriting(crew_speech_text)
 		return
 
-	# Crew teaser done — show menu buttons
-	is_advancing = true
-	_transition_to_menu()
-	is_advancing = false
+	# Advance to next crew dialogue step
+	if crew_dialogue_index < CREW_TEASER_STEPS.size() - 1:
+		is_advancing = true
+		crew_dialogue_index += 1
+		_show_crew_speech_step(crew_dialogue_index)
+		if is_inside_tree():
+			var tree = get_tree()
+			if tree:
+				await tree.create_timer(0.2).timeout
+		is_advancing = false
+	else:
+		# All crew dialogue done — show menu buttons
+		is_advancing = true
+		_transition_to_menu()
+		is_advancing = false
 
 # ─── Button Handlers ─────────────────────────────────────────────────
 
