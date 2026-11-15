@@ -1,4 +1,4 @@
-class_name SpaceWeatherAPI
+class_name SpaceWeatherAPIClass
 extends Node
 
 ## NASA DONKI Real-Time Space Weather API Manager
