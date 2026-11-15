@@ -1,0 +1,461 @@
+[gd_scene format=3 uid="uid://c8encyclopedia01"]
+
+[ext_resource type="FontFile" uid="uid://bvlgjyhyx0k0j" path="res://assets/fonts/Nasalization Rg.otf" id="1_font"]
+[ext_resource type="Script" path="res://scripts/encyclopedia.gd" id="2_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.03, 0.06, 0.11, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.831373, 1, 0.9)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0.831373, 1, 0.35)
+shadow_size = 22
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_flying"]
+bg_color = Color(0.05, 0.09, 0.16, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.75, 0.95, 0.75)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0.7, 0.95, 0.25)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pill"]
+bg_color = Color(0.08, 0.15, 0.25, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.831373, 1, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_nav"]
+bg_color = Color(0.04, 0.1, 0.18, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.831373, 1, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0.831373, 1, 0.3)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_nav_hover"]
+bg_color = Color(0.08, 0.22, 0.38, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 1, 0.95, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.3, 1, 0.95, 0.5)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_nav_pressed"]
+bg_color = Color(0.02, 0.05, 0.1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 1, 0.95, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_filter_btn"]
+bg_color = Color(0.04, 0.08, 0.15, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.6, 0.8, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_filter_btn_hover"]
+bg_color = Color(0.07, 0.16, 0.28, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.9, 1, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close"]
+bg_color = Color(0.2, 0.05, 0.05, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.35, 0.35, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
+bg_color = Color(0.06, 0.1, 0.16, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
+bg_color = Color(0, 0.831373, 1, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Encyclopedia" type="CanvasLayer"]
+layer = 20
+script = ExtResource("2_script")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0156863, 0.0352941, 0.0705882, 0.85)
+
+[node name="ModalAnchor" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="ModalAnchor"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1080, 720)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -360.0
+offset_right = 540.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="Margin" type="MarginContainer" parent="ModalAnchor/ModalPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="HeaderHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="IconTitle" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "📚"
+
+[node name="ModalTitle" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 19
+text = "SCIENTIFIC EXPEDITION ARCHIVES • FLYING CARDS"
+
+[node name="CardCounter" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "CARD 1 OF 19"
+horizontal_alignment = 2
+
+[node name="BtnClose" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_close")
+text = "✕"
+
+[node name="HSeparator1" type="HSeparator" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="FilterBar" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="BtnFilterALL" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/FilterBar"]
+custom_minimum_size = Vector2(95, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_filter_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_filter_btn_hover")
+text = "🌐 ALL (19)"
+
+[node name="BtnFilterFLARES" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/FilterBar"]
+custom_minimum_size = Vector2(110, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.3, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_filter_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_filter_btn_hover")
+text = "☀️ FLARES"
+
+[node name="BtnFilterERUPTIONS" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/FilterBar"]
+custom_minimum_size = Vector2(125, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.35, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_filter_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_filter_btn_hover")
+text = "💥 ERUPTIONS"
+
+[node name="BtnFilterFOOD" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/FilterBar"]
+custom_minimum_size = Vector2(110, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.5, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_filter_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_filter_btn_hover")
+text = "🌱 FOOD"
+
+[node name="BtnFilterPLANETS" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/FilterBar"]
+custom_minimum_size = Vector2(110, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.55, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_filter_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_filter_btn_hover")
+text = "🪐 PLANETS"
+
+[node name="BtnFilterMARS" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/FilterBar"]
+custom_minimum_size = Vector2(105, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.3, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_filter_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_filter_btn_hover")
+text = "🔴 MARS"
+
+[node name="BtnFilterSPACE" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/FilterBar"]
+custom_minimum_size = Vector2(105, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_filter_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_filter_btn_hover")
+text = "🌌 SPACE"
+
+[node name="CardAnchor" type="Control" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(1016, 420)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardPanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_flying")
+
+[node name="CardMargin" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 24
+
+[node name="CardVBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="CardTopHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox"]
+layout_mode = 2
+
+[node name="CategoryBadge" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/CardTopHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 17
+text = "☀️ SOLAR FLARES"
+
+[node name="CardIdLabel" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/CardTopHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.7, 0.85, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 13
+text = "ARCHIVE // FLR_20261107"
+
+[node name="CardBodyHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 28
+
+[node name="CardIcon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/CardBodyHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "☀️"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FactText" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/CardBodyHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 19
+theme_override_constants/line_spacing = 8
+text = "On November 7, 2026, the Sun released an M1.9-class solar flare. It started at 18:21 UTC, peaked at 18:42 and ended at 18:56."
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="SourceMargin" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox"]
+layout_mode = 2
+theme_override_constants/margin_top = 8
+
+[node name="SourcePanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/SourceMargin"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill")
+
+[node name="SourceMargin2" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/SourceMargin/SourcePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 6
+
+[node name="SourceText" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/CardAnchor/CardPanel/CardMargin/CardVBox/SourceMargin/SourcePanel/SourceMargin2"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "DATA SOURCE: NASA DONKI (FLR 2026-11-07T18:21:00-FLR-001)"
+autowrap_mode = 3
+
+[node name="NavHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BtnPrev" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/NavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_nav")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_nav_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_nav_pressed")
+text = "◀ PREVIOUS"
+
+[node name="ProgressMargin" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/NavHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+
+[node name="ProgressBar" type="ProgressBar" parent="ModalAnchor/ModalPanel/Margin/VBox/NavHBox/ProgressMargin"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+max_value = 19.0
+value = 1.0
+show_percentage = false
+
+[node name="BtnRandom" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/NavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_nav")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_nav_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_nav_pressed")
+text = "🎲 RANDOM"
+
+[node name="BtnNext" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/NavHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_nav")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_nav_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_nav_pressed")
+text = "NEXT ▶"

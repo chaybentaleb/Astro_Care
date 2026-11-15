@@ -114,19 +114,25 @@ Astro_Care/
 ├── README.md                    # Project documentation
 ├── scenes/
 │   ├── main.tscn & main.gd      # Intro cinematic & scene manager
-│   ├── donki_event_system.tscn  # Main interactive event terminal & HUD
-│   ├── dialogue.tscn            # Holographic intro dialogue
-│   ├── characters.tscn          # Crew member sprite assets
+│   ├── donki_event_system.tscn  # Main interactive event terminal, Astro-Bot advice & HUD
+│   ├── dialogue.tscn            # Holographic intro dialogue & How-To-Play modal
+│   ├── encyclopedia.tscn        # Interactive Flying Cards scientific encyclopedia
+│   ├── badges.tscn              # Mission achievements & badges modal
+│   ├── characters.tscn          # Crew member sprite assets (C1H–C4H)
 │   └── astro_bot.tscn           # Astro-Bot sprite assets
 ├── scripts/
 │   ├── game_manager.gd          # Core state machine, resource logic & win/loss checks
-│   ├── donki_event_system.gd    # Event dialog UI controller
-│   ├── donki_events.gd          # Events 1–8 data
-│   ├── osdr_events.gd           # Events 9–14 data
-│   ├── radlab_events.gd         # Events 15–18 data
-│   ├── csa_events.gd            # Events 19, 21–24 data
-│   ├── mars_stem_events.gd      # Events 20, 25–30 data
-│   └── test_*.gd                # Automated headless verification test suites
+│   ├── donki_event_system.gd    # Event terminal UI controller & hint/archives hooks
+│   ├── encyclopedia.gd          # Flying Cards UI animation & category filter controller
+│   ├── EncyclopediaData.gd      # 19 NASA & CSA verified scientific fact cards
+│   ├── badges.gd                # Badges modal UI controller
+│   ├── badges_data.gd           # 6 Mission Achievements definitions & unlock evaluations
+│   ├── donki_events.gd          # Events 1–8 data (Space Weather)
+│   ├── osdr_events.gd           # Events 9–14 data (Astronaut Biology)
+│   ├── radlab_events.gd         # Events 15–18 data (Dosimetry)
+│   ├── csa_events.gd            # Events 19, 21–24 data (Agriculture & ECLSS)
+│   ├── mars_stem_events.gd      # Events 20, 25–30 data (Base Survival & Quizzes)
+│   └── test_*.gd                # 13 automated headless verification test suites
 └── assets/
     ├── audio/                   # Sound effects & alarms
     ├── fonts/                   # Nasalization sci-fi font

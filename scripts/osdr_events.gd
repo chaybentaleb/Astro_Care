@@ -13,7 +13,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"osdr_code": "OSDR-STUDY-0419: Crew Circadian Disruption",
 			"scenario": "Microgravity and orbital sunrise cycles every 90 minutes have disrupted crew REM sleep. Astronauts report persistent insomnia and brain fog.",
 			"astronaut_name": "Dr. Sarah Chen (Payload Specialist)",
-			"astronaut_portrait": "res://assets/images/C1.png",
+			"astronaut_portrait": "res://assets/images/C1H.png",
 			"bot_advice": "Astro-Bot: \"Melatonin rhythms are desynchronized. Blue-light filtering will draw electrical power, while synchronized cabin sleep cycles consume reserve oxygen.\"",
 			"choice_a": {
 				"label": "Soft light in the evening",
@@ -39,7 +39,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"osdr_code": "OSDR-STUDY-0582: Postural Muscle Fiber Atrophy",
 			"scenario": "Biomechanics telemetry indicates significant calf and spinal postural muscle atrophy from lack of gravity load. The crew complains of acute muscular fatigue.",
 			"astronaut_name": "Commander Elena Rostova",
-			"astronaut_portrait": "res://assets/images/C3.png",
+			"astronaut_portrait": "res://assets/images/C3H.png",
 			"bot_advice": "Astro-Bot: \"Cardiovascular cycle training consumes aerobic oxygen, whereas high-resistance magnetic load machines draw power from our capacitors.\"",
 			"choice_a": {
 				"label": "Ride the bike",
@@ -66,7 +66,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"osdr_code": "OSDR-STUDY-0621: Trabecular Bone Demineralization",
 			"scenario": "Urinary calcium assays reveal rapid bone mineral density loss in femur and lumbar vertebrae. Astronaut bone structures are becoming brittle.",
 			"astronaut_name": "Chief Engineer Kenji Tanaka",
-			"astronaut_portrait": "res://assets/images/C4.png",
+			"astronaut_portrait": "res://assets/images/C4H.png",
 			"bot_advice": "Astro-Bot: \"Osteoclast activity is outpacing bone deposition. Harness impact jumping elevates respiratory rate, while acoustic vibrational therapy requires power.\"",
 			"choice_a": {
 				"label": "Jump with a harness",
@@ -92,7 +92,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"osdr_code": "OSDR-STUDY-0733: Spaceflight Immune Dysregulation",
 			"scenario": "Microgravity has suppressed T-cell activation. Astronaut C2 has contracted an aggressive rhinovirus with a severe fever and productive cough.",
 			"astronaut_name": "Dr. Marcus Vance (Life Support Officer)",
-			"astronaut_portrait": "res://assets/images/C2.png",
+			"astronaut_portrait": "res://assets/images/C2H.png",
 			"bot_advice": "Astro-Bot: \"Pathogen shedding in closed environmental control is hazardous. Medical quarantine requires dedicated ventilation; pharmaceutical treatment expends nutrient stores.\"",
 			"choice_a": {
 				"label": "Let them rest alone",

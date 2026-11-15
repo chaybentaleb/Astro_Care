@@ -24,6 +24,12 @@ signal intro_finished
 @onready var btn_close_how_to_play: Button = %BtnCloseHowToPlay
 @onready var btn_got_it: Button = %BtnGotIt
 
+var encyclopedia_scene = preload("res://scenes/encyclopedia.tscn")
+var encyclopedia_instance: EncyclopediaModal = null
+
+var badges_scene = preload("res://scenes/badges.tscn")
+var badges_instance: BadgesModal = null
+
 var dialogue_index: int = 0
 var is_advancing: bool = false
 
@@ -152,6 +158,12 @@ func show_dialogue_step(index: int) -> void:
 			tween.tween_property(action_buttons_center, "scale", Vector2(1.0, 1.0), 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _input(event: InputEvent) -> void:
+	# Ignore input if encyclopedia or badges modal is open
+	if encyclopedia_instance and is_instance_valid(encyclopedia_instance) and encyclopedia_instance.visible:
+		return
+	if badges_instance and is_instance_valid(badges_instance) and badges_instance.visible:
+		return
+
 	# Modal handles Escape to close
 	if how_to_play_modal and how_to_play_modal.visible:
 		if event.is_action_pressed("ui_cancel"):
@@ -166,6 +178,10 @@ func _input(event: InputEvent) -> void:
 		handle_advance()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if encyclopedia_instance and is_instance_valid(encyclopedia_instance) and encyclopedia_instance.visible:
+		return
+	if badges_instance and is_instance_valid(badges_instance) and badges_instance.visible:
+		return
 	if how_to_play_modal and how_to_play_modal.visible:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -174,6 +190,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		handle_advance()
 
 func _on_gui_input(event: InputEvent) -> void:
+	if encyclopedia_instance and is_instance_valid(encyclopedia_instance) and encyclopedia_instance.visible:
+		return
+	if badges_instance and is_instance_valid(badges_instance) and badges_instance.visible:
+		return
 	if how_to_play_modal and how_to_play_modal.visible:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -217,9 +237,15 @@ func _on_close_modal_pressed() -> void:
 		how_to_play_modal.visible = false
 
 func _on_encyclopedia_pressed() -> void:
-	# TODO: Connect Encyclopedia Flying Cards scene here
-	pass
+	_ensure_nodes()
+	if encyclopedia_instance == null or not is_instance_valid(encyclopedia_instance):
+		encyclopedia_instance = encyclopedia_scene.instantiate()
+		add_child(encyclopedia_instance)
+	encyclopedia_instance.open()
 
 func _on_badges_pressed() -> void:
-	# TODO: Connect Badges system modal here
-	pass
+	_ensure_nodes()
+	if badges_instance == null or not is_instance_valid(badges_instance):
+		badges_instance = badges_scene.instantiate()
+		add_child(badges_instance)
+	badges_instance.open()

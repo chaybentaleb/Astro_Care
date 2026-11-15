@@ -31,6 +31,12 @@ extends CanvasLayer
 @onready var event_title: Label = %EventTitle
 @onready var event_scenario: Label = %EventScenario
 
+# Astro-Bot Tactical Advice
+@onready var btn_hint: Button = %BtnHint if has_node("%BtnHint") else null
+@onready var bot_advice_panel: PanelContainer = %BotAdvicePanel if has_node("%BotAdvicePanel") else null
+@onready var bot_advice_text: Label = %BotAdviceText if has_node("%BotAdviceText") else null
+@onready var bot_icon: Label = %BotIcon if has_node("%BotIcon") else null
+
 # Choice Buttons (A, B, C, D)
 @onready var btn_choice_a: Button = %BtnChoiceA
 @onready var label_choice_a_text: Label = %ChoiceAText
@@ -64,6 +70,12 @@ extends CanvasLayer
 @onready var btn_restart_victory: Button = %BtnRestartVictory
 
 # Mode Selectors removed - Events progress naturally in ALL mode
+var encyclopedia_scene = preload("res://scenes/encyclopedia.tscn")
+var encyclopedia_instance: EncyclopediaModal = null
+
+var badges_scene = preload("res://scenes/badges.tscn")
+var badges_instance: BadgesModal = null
+
 var current_event_data: Dictionary = {}
 var is_processing_choice: bool = false
 var default_mode: String = "ALL"
@@ -119,6 +131,19 @@ func _ready() -> void:
 		
 	btn_restart_game_over.pressed.connect(_on_restart_pressed)
 	btn_restart_victory.pressed.connect(_on_restart_pressed)
+
+	if has_node("%BtnEncyclopedia"):
+		var btn_enc: Button = get_node("%BtnEncyclopedia")
+		if not btn_enc.pressed.is_connected(_on_encyclopedia_pressed):
+			btn_enc.pressed.connect(_on_encyclopedia_pressed)
+
+	if has_node("%BtnBadges"):
+		var btn_b: Button = get_node("%BtnBadges")
+		if not btn_b.pressed.is_connected(_on_badges_pressed):
+			btn_b.pressed.connect(_on_badges_pressed)
+
+	if btn_hint and not btn_hint.pressed.is_connected(_on_hint_pressed):
+		btn_hint.pressed.connect(_on_hint_pressed)
 
 	start_event_simulation(default_mode)
 
@@ -176,6 +201,21 @@ func _on_event_presented(event_data: Dictionary, current_idx: int, total_count: 
 		
 	event_title.text = "%d. %s" % [ev_id, event_data.get("title", "Unknown Event")]
 	event_scenario.text = event_data.get("scenario", "")
+	
+	# Astro-Bot Tactical Advice Setup
+	if bot_advice_panel:
+		bot_advice_panel.visible = false
+	if bot_advice_text:
+		bot_advice_text.text = event_data.get("bot_advice", "Astro-Bot: \"Analyze telemetry carefully, Commander.\"")
+	if bot_icon:
+		if ev_id >= 28 or ev_id <= 8:
+			bot_icon.modulate = Color(1.0, 0.4, 0.25) # Alert Red/Orange
+		elif ev_id >= 25:
+			bot_icon.modulate = Color(0.85, 0.45, 1.0) # STEM Purple
+		elif ev_id >= 19:
+			bot_icon.modulate = Color(0.35, 1.0, 0.45) # Bio Green
+		else:
+			bot_icon.modulate = Color(0.2, 0.9, 1.0) # Telemetry Cyan
 	
 	# Choice A Setup
 	var choice_a = event_data.get("choice_a", {})
@@ -341,12 +381,27 @@ func _on_restart_pressed() -> void:
 	start_event_simulation(default_mode)
 
 func _on_encyclopedia_pressed() -> void:
-	# TODO: Connect Encyclopedia Flying Cards scene here
-	pass
+	if encyclopedia_instance == null or not is_instance_valid(encyclopedia_instance):
+		encyclopedia_instance = encyclopedia_scene.instantiate()
+		add_child(encyclopedia_instance)
+	encyclopedia_instance.open()
 
 func _on_badges_pressed() -> void:
-	# TODO: Connect Badges system modal here
-	pass
+	if badges_instance == null or not is_instance_valid(badges_instance):
+		badges_instance = badges_scene.instantiate()
+		add_child(badges_instance)
+	var stats = game_manager.get_stats() if game_manager else {}
+	var history = game_manager.decision_history if game_manager else []
+	badges_instance.open(stats, history)
+
+func _on_hint_pressed() -> void:
+	if not bot_advice_panel:
+		return
+	bot_advice_panel.visible = not bot_advice_panel.visible
+	if bot_advice_panel.visible:
+		bot_advice_panel.modulate.a = 0.0
+		var tween = create_tween()
+		tween.tween_property(bot_advice_panel, "modulate:a", 1.0, 0.2)
 
 
 func _animate_event_entrance() -> void:

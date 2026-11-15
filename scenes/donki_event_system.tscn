@@ -151,6 +151,18 @@ corner_radius_bottom_left = 12
 shadow_color = Color(0.2, 0.9, 0.6, 0.35)
 shadow_size = 20
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bot_advice"]
+bg_color = Color(0.03, 0.08, 0.14, 0.95)
+border_width_left = 2
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.85, 0.6, 0.7)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="DonkiEventSystem" type="CanvasLayer"]
 layer = 5
 script = ExtResource("1_sysctl")
@@ -513,6 +525,39 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 12
 text = "DONKI ALERT: FLR-C3.4"
 
+[node name="BtnHint" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/TopBanner"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(85, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud_item")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "💡 HINT"
+
+[node name="BtnEncyclopedia" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/TopBanner"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud_item")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "📚 ARCHIVES"
+
+[node name="BtnBadges" type="Button" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/TopBanner"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(95, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud_item")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "🏆 BADGES"
+
 [node name="HSeparator" type="HSeparator" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
 layout_mode = 2
 
@@ -533,6 +578,39 @@ theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "Solar sensors detect a moderate C-class flare bursting from solar active region AR-3412. An ionization wavefront is approaching our forward telemetry arrays."
+autowrap_mode = 3
+
+[node name="BotAdvicePanel" type="PanelContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bot_advice")
+
+[node name="Margin" type="MarginContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HBox" type="HBoxContainer" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BotIcon" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel/Margin/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "🤖"
+
+[node name="BotAdviceText" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox/BotAdvicePanel/Margin/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.3, 0.95, 0.7, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+text = "Astro-Bot: \"Analyzing solar flare telemetry...\""
 autowrap_mode = 3
 
 [node name="ChoicesTitle" type="Label" parent="RootControl/MainMarginContainer/MainLayout/CenterContainer/EventCard/Margin/VBox"]

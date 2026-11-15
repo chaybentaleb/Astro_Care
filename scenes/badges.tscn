@@ -1,0 +1,601 @@
+[gd_scene format=3 uid="uid://c8badges01"]
+
+[ext_resource type="FontFile" uid="uid://bvlgjyhyx0k0j" path="res://assets/fonts/Nasalization Rg.otf" id="1_font"]
+[ext_resource type="Script" path="res://scripts/badges.gd" id="2_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.03, 0.06, 0.11, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.831373, 1, 0.9)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0.831373, 1, 0.35)
+shadow_size = 22
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge_item"]
+bg_color = Color(0.05, 0.09, 0.16, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.6, 0.8, 0.45)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pill_cat"]
+bg_color = Color(0.08, 0.15, 0.24, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.7, 0.9, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close"]
+bg_color = Color(0.2, 0.05, 0.05, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.35, 0.35, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="BadgesModal" type="CanvasLayer"]
+layer = 20
+script = ExtResource("2_script")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0156863, 0.0352941, 0.0705882, 0.85)
+
+[node name="ModalAnchor" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="ModalAnchor"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1040, 720)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -520.0
+offset_top = -360.0
+offset_right = 520.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="Margin" type="MarginContainer" parent="ModalAnchor/ModalPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderIcon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "🏆"
+
+[node name="ModalTitle" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 19
+text = "EXPEDITION AWARDS • 6 MISSION ACHIEVEMENTS"
+
+[node name="BadgesCounter" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "ACHIEVED: 0 OF 6"
+horizontal_alignment = 2
+
+[node name="BtnClose" type="Button" parent="ModalAnchor/ModalPanel/Margin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_close")
+text = "✕"
+
+[node name="HSeparator1" type="HSeparator" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ModalAnchor/ModalPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="BadgesContainer" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Badge1" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge_item")
+
+[node name="M" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="HBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "🛡️"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TopHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "Solar Shield Specialist"
+
+[node name="CatPanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill_cat")
+
+[node name="CatM" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox/VBox/TopHBox/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="Category" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox/VBox/TopHBox/CatPanel/CatM"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.7, 0.2, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 10
+text = "NASA DONKI"
+
+[node name="Desc" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.85)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "Survive all 8 NASA DONKI solar storms, coronal ejections & magnetic disturbances."
+autowrap_mode = 3
+
+[node name="Status" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge1/M/HBox"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 0.7)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 13
+text = "🔒 LOCKED"
+horizontal_alignment = 2
+
+[node name="Badge2" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge_item")
+
+[node name="M" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="HBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "❤️"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TopHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "Flight Surgeon"
+
+[node name="CatPanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill_cat")
+
+[node name="CatM" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox/VBox/TopHBox/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="Category" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox/VBox/TopHBox/CatPanel/CatM"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.6, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 10
+text = "NASA OSDR"
+
+[node name="Desc" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.85)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "Maintain crew physical and mental health at 70% or higher through medical countermeasures."
+autowrap_mode = 3
+
+[node name="Status" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge2/M/HBox"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 0.7)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 13
+text = "🔒 LOCKED"
+horizontal_alignment = 2
+
+[node name="Badge3" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge_item")
+
+[node name="M" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="HBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "☢️"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TopHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "Dosimetry Master"
+
+[node name="CatPanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill_cat")
+
+[node name="CatM" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox/VBox/TopHBox/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="Category" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox/VBox/TopHBox/CatPanel/CatM"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.35, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 10
+text = "NASA RADLAB"
+
+[node name="Desc" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.85)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "Navigate deep-space Galactic Cosmic Rays keeping cumulative radiation exposure under 40 mSv."
+autowrap_mode = 3
+
+[node name="Status" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge3/M/HBox"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 0.7)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 13
+text = "🔒 LOCKED"
+horizontal_alignment = 2
+
+[node name="Badge4" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge_item")
+
+[node name="M" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="HBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "🌱"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TopHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "Martian Botanist"
+
+[node name="CatPanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill_cat")
+
+[node name="CatM" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox/VBox/TopHBox/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="Category" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox/VBox/TopHBox/CatPanel/CatM"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.45, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 10
+text = "CSA AGRICULTURE"
+
+[node name="Desc" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.85)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "Successfully cultivate hydroponic crops and reclaim water in the closed-loop greenhouse."
+autowrap_mode = 3
+
+[node name="Status" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge4/M/HBox"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 0.7)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 13
+text = "🔒 LOCKED"
+horizontal_alignment = 2
+
+[node name="Badge5" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge_item")
+
+[node name="M" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="HBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "🎓"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TopHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "STEM Science Scholar"
+
+[node name="CatPanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill_cat")
+
+[node name="CatM" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox/VBox/TopHBox/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="Category" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox/VBox/TopHBox/CatPanel/CatM"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.5, 1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 10
+text = "CSA STEM"
+
+[node name="Desc" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.85)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "Demonstrate space science knowledge by answering all CSA STEM quizzes correctly."
+autowrap_mode = 3
+
+[node name="Status" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge5/M/HBox"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 0.7)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 13
+text = "🔒 LOCKED"
+horizontal_alignment = 2
+
+[node name="Badge6" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge_item")
+
+[node name="M" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="HBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "🏆"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TopHBox" type="HBoxContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "Legendary Mars Commander"
+
+[node name="CatPanel" type="PanelContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox/VBox/TopHBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill_cat")
+
+[node name="CatM" type="MarginContainer" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox/VBox/TopHBox/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="Category" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox/VBox/TopHBox/CatPanel/CatM"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 10
+text = "GRAND EXPEDITION"
+
+[node name="Desc" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.85)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "Survive the entire 30-Sol Martian expedition with an S or A Commander Rating."
+autowrap_mode = 3
+
+[node name="Status" type="Label" parent="ModalAnchor/ModalPanel/Margin/VBox/ScrollContainer/BadgesContainer/Badge6/M/HBox"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 0.7)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 13
+text = "🔒 LOCKED"
+horizontal_alignment = 2
