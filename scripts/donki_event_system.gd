@@ -51,6 +51,18 @@ extends CanvasLayer
 # Audio Stream Players
 @onready var audio_mood_popup: AudioStreamPlayer = %AudioMoodPopup if has_node("%AudioMoodPopup") else null
 @onready var audio_typewriter: AudioStreamPlayer = %AudioTypewriter if has_node("%AudioTypewriter") else null
+@onready var heartbeat_audio: AudioStreamPlayer = %HeartbeatAudio
+@onready var breathing_audio: AudioStreamPlayer = %BreathingAudio
+@onready var failure_audio: AudioStreamPlayer = %FailureAudio
+
+var sfx_heartbeat: AudioStream = null
+var sfx_breathing: AudioStream = null
+var sfx_failure: AudioStream = null
+
+var is_heartbeat_playing: bool = false
+var is_breathing_playing: bool = false
+var heartbeat_tween: Tween = null
+var breathing_tween: Tween = null
 
 
 
@@ -185,6 +197,10 @@ func _ready() -> void:
 	_load_astrobot_assets()
 	_start_astrobot_idle_animation()
 
+	# Initialize physiological & critical audio
+	_ensure_physiological_audio()
+	_load_physiological_audio_assets()
+
 	if btn_astrobot_avatar and not btn_astrobot_avatar.pressed.is_connected(_on_astrobot_avatar_pressed):
 		btn_astrobot_avatar.pressed.connect(_on_astrobot_avatar_pressed)
 
@@ -201,6 +217,7 @@ func _ready() -> void:
 
 func start_event_simulation(mode: String = "ALL") -> void:
 	default_mode = mode
+	_stop_physiological_audio()
 	game_over_panel.visible = false
 	victory_panel.visible = false
 	feedback_panel.visible = false
@@ -336,6 +353,22 @@ func _on_resources_changed(resources: Dictionary, delta: Dictionary) -> void:
 		rad_badge.text = "[ NOMINAL ]"
 		rad_badge.modulate = Color(0.2, 1.0, 0.4)
 
+	# Monitor physiological sound effects
+	var delta_health = delta.get("health", 0)
+	var delta_oxygen = delta.get("oxygen", 0)
+
+	# Low Health (<= 25%) or heavy hit
+	if health <= 25 or (delta_health <= -20 and health <= 40):
+		_start_heartbeat()
+	elif health > 25:
+		_stop_heartbeat(true)
+
+	# Low Oxygen (<= 25%) or sharp drop
+	if oxygen <= 25 or (delta_oxygen <= -20 and oxygen <= 40):
+		_start_breathing()
+	elif oxygen > 25:
+		_stop_breathing(true)
+
 func _on_choice_a_pressed() -> void:
 	if is_processing_choice: return
 	_disable_buttons()
@@ -382,6 +415,9 @@ func _on_harvest_matured(crop_name: String, food_amount: int) -> void:
 	print("🌱 Greenhouse Harvest Event: %s produced +%d Food" % [crop_name, food_amount])
 
 func _on_game_over(reason: String, stats: Dictionary) -> void:
+	# Immediately stop looping physiological audio and play failure sound
+	_play_mission_failed_sound()
+
 	game_over_reason.text = reason
 	var rad_str = "%.1f" % stats.radiation if not is_equal_approx(stats.radiation, round(stats.radiation)) else "%d" % int(stats.radiation)
 	game_over_stats.text = "FINAL SHIP & CREW STATUS:\n• Health: %d%%  |  Energy: %d%%  |  Oxygen: %d%%\n• Shield: %d%%  |  Radiation: %s / %.0f mSv  |  Food: %d  |  Water: %d%%\n• Events survived: %d / %d (%s mode)" % [
@@ -394,6 +430,9 @@ func _on_game_over(reason: String, stats: Dictionary) -> void:
 	tween.tween_property(game_over_panel, "modulate:a", 1.0, 0.4)
 
 func _on_game_won(stats: Dictionary) -> void:
+	# Immediately stop looping physiological audio
+	_stop_physiological_audio()
+
 	if victory_title:
 		victory_title.text = "MISSION SUCCESSFUL • MARS EXPEDITION CONQUERED"
 	if victory_subtitle:
@@ -411,6 +450,7 @@ func _on_game_won(stats: Dictionary) -> void:
 	tween.tween_property(victory_panel, "modulate:a", 1.0, 0.4)
 
 func _on_restart_pressed() -> void:
+	_stop_physiological_audio()
 	# Reset badge manager on restart
 	if badge_manager and badge_manager.has_method("reset"):
 		badge_manager.reset()
@@ -690,6 +730,140 @@ func _stop_all_audio() -> void:
 		audio_typewriter.stop()
 	if audio_mood_popup and audio_mood_popup.playing:
 		audio_mood_popup.stop()
+
+# ─── Physiological & Mission Failed Audio Systems ──────────────────
+
+func _ensure_physiological_audio() -> void:
+	if heartbeat_audio == null:
+		heartbeat_audio = get_node_or_null("%HeartbeatAudio")
+	if heartbeat_audio == null:
+		heartbeat_audio = AudioStreamPlayer.new()
+		heartbeat_audio.name = "HeartbeatAudio"
+		add_child(heartbeat_audio)
+	if not heartbeat_audio.finished.is_connected(_on_heartbeat_finished):
+		heartbeat_audio.finished.connect(_on_heartbeat_finished)
+
+	if breathing_audio == null:
+		breathing_audio = get_node_or_null("%BreathingAudio")
+	if breathing_audio == null:
+		breathing_audio = AudioStreamPlayer.new()
+		breathing_audio.name = "BreathingAudio"
+		add_child(breathing_audio)
+	if not breathing_audio.finished.is_connected(_on_breathing_finished):
+		breathing_audio.finished.connect(_on_breathing_finished)
+
+	if failure_audio == null:
+		failure_audio = get_node_or_null("%FailureAudio")
+	if failure_audio == null:
+		failure_audio = AudioStreamPlayer.new()
+		failure_audio.name = "FailureAudio"
+		add_child(failure_audio)
+
+func _load_physiological_audio_assets() -> void:
+	if ResourceLoader.exists("res://assets/audio/sound effects/heartbeat.mp3.mp3"):
+		sfx_heartbeat = load("res://assets/audio/sound effects/heartbeat.mp3.mp3")
+	elif ResourceLoader.exists("res://assets/audio/heartbeat.mp3.mp3"):
+		sfx_heartbeat = load("res://assets/audio/heartbeat.mp3.mp3")
+
+	if ResourceLoader.exists("res://assets/audio/sound effects/breathing.mp3.mp3"):
+		sfx_breathing = load("res://assets/audio/sound effects/breathing.mp3.mp3")
+	elif ResourceLoader.exists("res://assets/audio/breathing.mp3.mp3"):
+		sfx_breathing = load("res://assets/audio/breathing.mp3.mp3")
+
+	if ResourceLoader.exists("res://assets/audio/error.mp3.mp3"):
+		sfx_failure = load("res://assets/audio/error.mp3.mp3")
+	elif ResourceLoader.exists("res://assets/audio/sound effects/Error.mp3"):
+		sfx_failure = load("res://assets/audio/sound effects/Error.mp3")
+	elif ResourceLoader.exists("res://assets/audio/sound effects/losing.mp3.mp3"):
+		sfx_failure = load("res://assets/audio/sound effects/losing.mp3.mp3")
+
+	if sfx_heartbeat is AudioStreamMP3:
+		(sfx_heartbeat as AudioStreamMP3).loop = true
+	if sfx_breathing is AudioStreamMP3:
+		(sfx_breathing as AudioStreamMP3).loop = true
+
+func _on_heartbeat_finished() -> void:
+	if is_heartbeat_playing and heartbeat_audio and sfx_heartbeat:
+		heartbeat_audio.play()
+
+func _on_breathing_finished() -> void:
+	if is_breathing_playing and breathing_audio and sfx_breathing:
+		breathing_audio.play()
+
+func _start_heartbeat() -> void:
+	if not heartbeat_audio or not sfx_heartbeat:
+		return
+	if is_heartbeat_playing and heartbeat_audio.playing:
+		return
+	is_heartbeat_playing = true
+	if heartbeat_tween:
+		heartbeat_tween.kill()
+	heartbeat_audio.stream = sfx_heartbeat
+	heartbeat_audio.volume_db = -36.0
+	heartbeat_audio.play()
+	heartbeat_tween = create_tween()
+	heartbeat_tween.tween_property(heartbeat_audio, "volume_db", -4.0, 0.8)
+
+func _stop_heartbeat(smooth: bool = true) -> void:
+	if not is_heartbeat_playing and (heartbeat_audio == null or not heartbeat_audio.playing):
+		return
+	is_heartbeat_playing = false
+	if heartbeat_tween:
+		heartbeat_tween.kill()
+	if not heartbeat_audio or not heartbeat_audio.playing:
+		return
+	if smooth:
+		heartbeat_tween = create_tween()
+		heartbeat_tween.tween_property(heartbeat_audio, "volume_db", -40.0, 0.8)
+		heartbeat_tween.tween_callback(func():
+			if not is_heartbeat_playing and heartbeat_audio:
+				heartbeat_audio.stop()
+		)
+	else:
+		heartbeat_audio.stop()
+
+func _start_breathing() -> void:
+	if not breathing_audio or not sfx_breathing:
+		return
+	if is_breathing_playing and breathing_audio.playing:
+		return
+	is_breathing_playing = true
+	if breathing_tween:
+		breathing_tween.kill()
+	breathing_audio.stream = sfx_breathing
+	breathing_audio.volume_db = -36.0
+	breathing_audio.play()
+	breathing_tween = create_tween()
+	breathing_tween.tween_property(breathing_audio, "volume_db", -5.0, 0.8)
+
+func _stop_breathing(smooth: bool = true) -> void:
+	if not is_breathing_playing and (breathing_audio == null or not breathing_audio.playing):
+		return
+	is_breathing_playing = false
+	if breathing_tween:
+		breathing_tween.kill()
+	if not breathing_audio or not breathing_audio.playing:
+		return
+	if smooth:
+		breathing_tween = create_tween()
+		breathing_tween.tween_property(breathing_audio, "volume_db", -40.0, 0.8)
+		breathing_tween.tween_callback(func():
+			if not is_breathing_playing and breathing_audio:
+				breathing_audio.stop()
+		)
+	else:
+		breathing_audio.stop()
+
+func _stop_physiological_audio() -> void:
+	_stop_heartbeat(false)
+	_stop_breathing(false)
+
+func _play_mission_failed_sound() -> void:
+	_stop_physiological_audio()
+	if failure_audio and sfx_failure:
+		failure_audio.stream = sfx_failure
+		failure_audio.volume_db = -2.0
+		failure_audio.play()
 
 
 func _animate_event_entrance() -> void:
