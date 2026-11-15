@@ -275,12 +275,18 @@ func _transition_to_menu() -> void:
 	if click_hint:
 		click_hint.visible = false
 
+	# Hide the speech bubble first
+	if crew_speech_bubble:
+		var bubble_out = create_tween()
+		bubble_out.tween_property(crew_speech_bubble, "modulate:a", 0.0, 0.2)
+		await bubble_out.finished
+		crew_speech_bubble.visible = false
+
 	# Show action buttons with smooth fade-in below crew
 	if action_buttons_center:
 		action_buttons_center.visible = true
 		action_buttons_center.modulate.a = 0.0
 		action_buttons_center.scale = Vector2(0.85, 0.85)
-		action_buttons_center.pivot_offset = action_buttons_center.size / 2.0
 		var tween = create_tween().set_parallel(true)
 		tween.tween_property(action_buttons_center, "modulate:a", 1.0, 0.35)
 		tween.tween_property(action_buttons_center, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -384,6 +390,10 @@ func _input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 		return
 
+	# In menu phase, let buttons handle their own clicks — don't intercept
+	if current_phase == "menu":
+		return
+
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
 	elif event.is_action_pressed("ui_accept"):
@@ -396,6 +406,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if how_to_play_modal and how_to_play_modal.visible:
 		return
+	if current_phase == "menu":
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
 	elif event.is_action_pressed("ui_accept"):
@@ -407,6 +419,8 @@ func _on_gui_input(event: InputEvent) -> void:
 	if badges_instance and is_instance_valid(badges_instance) and badges_instance.visible:
 		return
 	if how_to_play_modal and how_to_play_modal.visible:
+		return
+	if current_phase == "menu":
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		handle_advance()
